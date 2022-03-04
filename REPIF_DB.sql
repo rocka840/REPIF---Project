@@ -1,6 +1,6 @@
-drop database REPIF_db;
 
 create database REPIF_db;
+use REPIF_db;
 
 CREATE TABLE Script(
    ScriptName VARCHAR(50) NOT NULL,
@@ -27,7 +27,6 @@ CREATE TABLE Users(
    PRIMARY KEY(UserNo),
    FOREIGN KEY(HostName) REFERENCES SmartBox(HostName)
 );
-
 
 CREATE TABLE Groups(
    GroupNo SMALLINT unique not null AUTO_INCREMENT,
@@ -78,9 +77,6 @@ CREATE TABLE `Use`(
    FOREIGN KEY(GroupNo) REFERENCES Groups(GroupNo),
    FOREIGN KEY(ScriptName) REFERENCES Script(ScriptName)
 );
-
-
-
 
 CREATE TABLE Concern(
    GroupNo SMALLINT unique not null AUTO_INCREMENT,
