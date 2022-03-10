@@ -94,3 +94,97 @@ CREATE TABLE Manage(
    FOREIGN KEY(HostName) REFERENCES SmartBox(HostName),
    FOREIGN KEY(UserNo) REFERENCES Users(UserNo)
 );
+
+
+INSERT INTO SmartBox (HostName, Description, Location)
+VALUES (“SB_1”,”ModelA”,”Building1-apartment3”);
+
+INSERT INTO SmartBox (HostName, Description, Location)
+VALUES (“SB_7”,”ModelA”,”Building7-apartment2”);
+
+INSERT INTO SmartBox (HostName, Description, Location)
+VALUES (“SB_23”,”ModelB”,”Building4-petshop”);
+
+INSERT INTO Pin (HostName, PinNo, Input, Designation)
+VALUES (“SB_1”,”7”,”X”, “GPIO4”); (X as 1)
+
+INSERT INTO Pin (HostName, PinNo, Input, Designation)
+VALUES (“SB_1”,”11”,”X”, “GPIO17”); (X as 1)
+
+INSERT INTO Pin (HostName, PinNo, Input, Designation)
+VALUES (“SB_7”,”33”, “0”, “GPIO13”); (empty as 0)
+
+INSERT INTO Pin (HostName, PinNo, Input, Designation)
+VALUES (“SB_23”,”35”, “0”, “GPIO19”); (empty as 0)
+
+INSERT INTO Groups (GroupNo, GroupName, Description, HostName)
+VALUES (1,”CHIEF”,”Lamps in the kitchen”, “SB_7”); 
+
+INSERT INTO Groups (GroupNo, GroupName, Description, HostName)
+VALUES (3,”ALL”,”All lamps”, “SB_23”); 
+
+INSERT INTO Groups (GroupNo, GroupName, Description, HostName)
+VALUES (11,”GARAGE”,”Garage door”, “SB_1”);
+
+INSERT INTO Groups (GroupNo, GroupName, Description, HostName)
+VALUES (13,”FLUR”,”Hallway lamps”, “SB_1”);
+
+INSERT INTO Concern (GroupNo, HostName, PinNo)
+VALUES (11,”SB_1”, 7); 
+
+INSERT INTO Concern (GroupNo, HostName, PinNo)
+VALUES (13,”SB_1”, 11); 
+
+INSERT INTO Concern (GroupNo, HostName, PinNo)
+VALUES (1,”SB_7”, 33); 
+
+INSERT INTO Concern (GroupNo, HostName, PinNo)
+VALUES (3,”SB_23”, 35); 
+
+INSERT INTO Script (ScriptName, Path, Description)
+VALUES (“Dimmer”,”/Switch/Dimmer.sh”, “Dim lamp”);
+
+INSERT INTO Script (ScriptName, Path, Description)
+VALUES (“Bell”,”/Sound/bell.sh”, “Play ringtone”);
+
+INSERT INTO Script (ScriptName, Path, Description)
+VALUES (“Strobo”,”/Switch/Strobo.sh”, “Make lamp flash quickly”);
+
+INSERT INTO `Use` (GroupNo, ScriptName)
+VALUES ( 1,”Dimmer”);
+
+INSERT INTO `Use` (GroupNo, ScriptName)
+VALUES ( 3,”Bell”);
+
+INSERT INTO `Use` (GroupNo, ScriptName)
+VALUES ( 11,”Strobo”);
+
+INSERT INTO Events (HostName, PinNo, EventCode, Description)
+VALUES ( “SB_1”,7, “K”, “Press light switch briefly”);
+
+INSERT INTO Events (HostName, PinNo, EventCode, Description)
+VALUES ( “SB_1”,11, “L”, “Long press touch field”); 
+
+INSERT INTO Events (HostName, PinNo, EventCode, Description)
+VALUES ( “SB_7”,33, “K”, “Touch field briefly”); 
+
+INSERT INTO Switch_Execute (HostName, PinNo, EventCode, GroupNo, TargetFunctionCode, Description, SequenceNo, WaitingDuration)
+VALUES ( “SB_1”,11, “L”, 11, “E”, “Switch on alarm”, 2, 5);
+
+INSERT INTO Switch_Execute (HostName, PinNo, EventCode, GroupNo, TargetFunctionCode, Description, SequenceNo, WaitingDuration)
+VALUES ( “SB_7”,33, “K”, 1, “U”, “Switch light in the bathroom”,0,0); 
+
+INSERT INTO Switch_Execute (HostName, PinNo, EventCode, GroupNo, TargetFunctionCode, Description, SequenceNo, WaitingDuration)
+VALUES ( “SB_1”,7, “K”, 13, “A”, “Close window”, 1,0); 
+
+INSERT INTO Users (UserNo, Name, Firstname, Technician, Email, Passwd, HostName)
+VALUES ( 3 , “Theis”, “Anna”, “X”, “a.theis@bt.lu”, “3!zhnT5”, “SB_1”);
+
+INSERT INTO Users (UserNo, Name, Firstname, Technician, Email, Passwd, HostName)
+VALUES ( 7 , “Schmit”, “Jean”, “jean@jmail.com”, “N”, “1234abcd”, “SB_3”);
+
+INSERT INTO Users (UserNo, Name, Firstname, Technician, Email, Passwd, HostName)
+VALUES ( 11, “Fellens”, “Claude”, “X”, “claude@fellens.lu”, “Cl4ud3”, “SB_7”);
+
+INSERT INTO Users (UserNo, Name, Firstname, Technician, Email, Passwd, HostName)
+VALUES ( 13, “Adam”, “Laure”, “N”, “laury@jmail.com”, “+lowä+!4”, “SB_9”);
