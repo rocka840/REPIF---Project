@@ -10,12 +10,6 @@
 
     <h1>Log-In into Database of User - REPIF</h1>
 
-
-
-
-
-
-
     <form method="POST" action="UsersPage.php">  
         <div class="container">   
             <label>Username : </label>   
