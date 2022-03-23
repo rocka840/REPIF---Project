@@ -9,7 +9,9 @@
 <body>
 
  <h1>Technician Configuration Pages</h1>
- 
+ <?php
+ include_once("technav.php");
+?>
 
 </body>
 </html>

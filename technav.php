@@ -10,9 +10,11 @@
 <body>
 
 <div class="nav">
-<a href="TechPage.php">Tech Main Page</a>
+<a href="TechPage.php">Main</a>
 <a href="Pins.php">Pins</a>
 <a href="Smartboxes.php">Smartboxes</a>
+<a href="Script.php">Script</a>
+<a href="Users.php">Users</a>
 </div>
 
 
