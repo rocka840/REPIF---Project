@@ -9,15 +9,42 @@
 <body>    
 
     <?php
-        if(isset($_POST["LastName"], $_POST["FirstName"],$_POST["Psw"])){
-           $sqlLog = $connection->prepare("Select * from User where LastName, FirstName, Email, Psw = ????");
-           $sqlLog->bind_param("ssss", $_POST["LastName"], $_POST["FirstName"],$_POST["Psw"]);
-           $sqlLog->execute();
+        include_once "repif_db.php";
 
-           if($selectionWentOK){
-               $result = $sqlLog->get_result();
-               while ($row = $result->fetch_assoc()){
-                ?>
+        session_unset();
+        session_destroy();
+        $_SESSION["isUserLoggedIn"] = false;
+
+        if(isset($_POST["LastName"], $_POST["FirstName"],$_POST["Psw"])){
+           $sql = $connection->prepare("Select * from User where LastName, FirstName, Email, Psw = ????");
+           if(!$sql){
+               die("Error in your sql");
+           }
+
+           $sql->bind_param("ssss", $_POST["LastName"], $_POST["FirstName"], $_POST["Psw"]);
+           if(!$sql->execute()){
+                die("Error execute sql statement");
+           }
+
+           $result = $sql->get_result();
+
+           if($result->num_rows==0){
+               print "Your username is not in our database";
+           } else {
+               $row = $result->fetch_assoc();
+
+               if(password_verify($_POST["Psw"])){
+                   print "You typed the correct password. You are now logged in";
+                   $_SESSION["isUserLoggedIn"] = true;
+                   $_SESSION["CurrentUser"] = $_POST[""]
+                   $_SESSION["UserRole"] = $row["UserRole"];
+               } else {
+                   print "Wrong password"
+               }
+            }
+           
+            ?>
+
                 <h1>Log-In into Database of User - REPIF</h1>
 
                 <form method="POST" action="UsersPage.php">  
@@ -36,18 +63,6 @@
                         <button type="submit">Login</button> 
                     </div>   
                 </form>
-                <?php
-                
-               }
-           }
-        } else {
-            print "Something went wrong when selecting data";
-        }
-    ?>
-
-
-    
-
 </body>
 
 </html>
