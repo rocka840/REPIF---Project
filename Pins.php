@@ -10,5 +10,54 @@
 </head>
 <body>
     
+<h1>Pins</h1>
+
+<?php
+include_once("technav.php");
+
+    if(isset($_POST["pinToDelete"])){
+        unset($_SESSION["Pins"][$_POST["pinToDelete"]]);
+    }
+?>
+
+<table class="pins">
+    <tr>
+        <th>HostName:</th>
+        <th>PinNo:</th>
+        <th>Input:</th>
+        <th>Designation:</th>
+    </tr>
+
+    <?php
+        foreach ($_SESSION["Pins"] as $key => $value){
+            $sqlSelect = $connection->prepare("SELECT * from Pin where PinNo = ?");
+            $sqlSelect->bind_param("i", $key);
+            $selectionWentOk = $sqlSelect->execute();
+
+            if($selectionWentOk){
+                $result = $sqlSelect->get_result();
+                $row = $result->fetch_assoc();
+
+                ?>
+                <tr>
+                    <td><?= $row["HostName"] ?></td>
+                    <td><?= $row["PinNo"]?></td>
+                    <td><?= $row["Input"]?></td>
+                    <td><?= $row["Designation"]?></td>
+                    <td>
+                        <form method="POST">
+                            <input type="hidden" name="pinToDelete" value="<?= $key ?>">
+                            <input type="submit" value="Remove">
+                        </form>
+                    </td>
+                </tr>
+                <?php
+            }
+        }
+    ?>
+
+</table>
+
+
 </body>
 </html>
