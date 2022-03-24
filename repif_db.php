@@ -4,6 +4,10 @@ if(!isset($_SESSION["UserLoggedIn"])){
     $_SESSION["UserLoggedIn"] = false;
 }
 
+if(!isset($_SESSION["Pins"])){
+    $_SESSION["Pins"] = [];
+}
+
 $servername = "192.168.6.30";
 $username = "rocka840";
 $password = "Passw0rd!";

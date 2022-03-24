@@ -30,8 +30,8 @@ include_once("technav.php");
 
     <?php
         foreach ($_SESSION["Pins"] as $key => $value){
-            $sqlSelect = $connection->prepare("SELECT * from Pin where PinNo = ?");
-            $sqlSelect->bind_param("i", $key);
+            $sqlSelect = $connection->prepare("INSERT INTO Pins (HostName, PinNo, Input, Designation) values (?,?,?,?)");
+            $sqlSelect->bind_param("siis", $key, $value);
             $selectionWentOk = $sqlSelect->execute();
 
             if($selectionWentOk){
