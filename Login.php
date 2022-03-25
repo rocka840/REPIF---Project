@@ -1,4 +1,4 @@
-<!DOCTYPE html>   
+<!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,10 +10,6 @@
 
     <?php
         include_once "repif_db.php";
-
-        session_unset();
-        session_destroy();
-        $_SESSION["isUserLoggedIn"] = false;
 
         if(isset($_POST["Email"],$_POST["Psw"])){
            $sql = $connection->prepare("Select * from Users where Email = ?");

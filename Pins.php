@@ -4,6 +4,7 @@ include_once "repif_db.php";
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
@@ -12,58 +13,57 @@ include_once "repif_db.php";
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
     <script src='main.js'></script>
 </head>
+
 <body>
-    
-<h1>Pins</h1>
 
-<?php
-include_once("technav.php");
-
-    if(isset($_POST["pinToDelete"])){
-        unset($_SESSION["Pins"][$_POST["pinToDelete"]]);
-    }
-?>
-
-<table class="pins">
-    <tr>
-        <th>HostName:</th>
-        <th>PinNo:</th>
-        <th>Input:</th>
-        <th>Designation:</th>
-    </tr>
+    <h1>Pins</h1>
 
     <?php
-        var_dump($_SESSION["Pins"]);
+    include_once("technav.php");
+    $result = $connection->query("SELECT * from Pin");
 
-        foreach ($_SESSION["Pins"] as $key => $value){
-            $sqlSelect = $connection->prepare("INSERT INTO Pins (HostName, PinNo, Input, Designation) values (?,?,?,?)");
-            $sqlSelect->bind_param("siis", $key, $value);
-            $selectionWentOk = $sqlSelect->execute();
-
-            if($selectionWentOk){
-                $result = $sqlSelect->get_result();
-                $row = $result->fetch_assoc();
-
-                ?>
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+    ?>
+            <table>
                 <tr>
                     <td><?= $row["HostName"] ?></td>
-                    <td><?= $row["PinNo"]?></td>
-                    <td><?= $row["Input"]?></td>
-                    <td><?= $row["Designation"]?></td>
+                    <td><?= $row["PinNo"] ?></td>
+                    <td><?= $row["Input"] ?></td>
+                    <td><?= $row["Designation"] ?></td>
                     <td>
                         <form method="POST">
-                            <input type="hidden" name="pinToDelete" value="<?= $key ?>">
+                            <input type="hidden" name="pinToDelete" value="<?= $row["PinNo"] ?>">
                             <input type="submit" value="Remove">
                         </form>
                     </td>
                 </tr>
-                <?php
-            }
+        <?php
         }
-    ?>
+    } else {
+        print "Something went wrong selecting data";
+    }
 
-</table>
+    if (isset($_POST["HostName"], $_POST["PinNo"], $_POST["Input"], $_POST["Designation"])) {
+        $sqlInsert = $connection->prepare("INSERT INTO Pin (HostName, PinNo, Input, Designation) values (?,?,?,?)");
+        $sqlInsert->bind_param("siis", $_POST["HostName"], $_POST["PinNo"], $_POST["Input"], $_POST["Designation"]);
+        $resultOfExecute = $sqlInsert->execute();
+        if (!$resultOfExecute) {
+            print "Adding a new pin, failed!";
+        }
+    }
+        ?>
+
+            </table>
+            <form method="POST">
+                Add a New Pin: <input name="HostName" placeholder="SB_nbr">
+                <input name="PinNo" placeholder="nbr">
+                <input name="Input" placeholder="1 or 0">
+                <input name="Designation" placeholder="GPIOnbr">
+                <input type="submit" value="Add">
+            </form>
 
 
 </body>
+
 </html>
