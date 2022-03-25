@@ -8,10 +8,21 @@
 
 <body>
 
- <h1>Technician Configuration Pages</h1>
- <?php
- include_once("technav.php");
-?>
+    <h1>Technician Configuration Pages</h1>
+    <?php
+    include_once("technav.php");
+
+    if(isset($_POST["logout"])){
+        session_unset();
+        session_destroy();
+        $_SESSION["isUserLoggedIn"] == false;
+    }
+    ?>
+
+    <p>Logout Section</p>
+    <form method="POST">
+        <input type="submit" value="logout" name="LogOut">
+    </form>
 
 </body>
 </html>

@@ -1,3 +1,7 @@
+<?php
+include_once "repif_db.php";
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -29,6 +33,8 @@ include_once("technav.php");
     </tr>
 
     <?php
+        var_dump($_SESSION["Pins"]);
+
         foreach ($_SESSION["Pins"] as $key => $value){
             $sqlSelect = $connection->prepare("INSERT INTO Pins (HostName, PinNo, Input, Designation) values (?,?,?,?)");
             $sqlSelect->bind_param("siis", $key, $value);
