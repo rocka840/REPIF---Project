@@ -55,7 +55,7 @@
                 <form method="POST">  
                     <div class="container">   
                         <label>Email:</label>   
-                        <input type="text" name="Email" required>
+                        <input type="text" name="Email" required placeholder="example@gmail.com">
                         <label>Password:</label>   
                         <input type="password" placeholder="Enter Password" name="Psw" required>
                         <button type="submit">Login</button> 

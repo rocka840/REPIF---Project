@@ -19,54 +19,79 @@ include_once "repif_db.php";
     <h1>Users</h1>
 
     <?php
-    include_once("technav.php");
-    include_once("repif_db.php");
+        include_once("technav.php");
+        include_once("repif_db.php");
 
-    ?>
-
-    <table class="users">
-        <tr>
-            <th>UserNo:</th>
-            <th>LastName:</th>
-            <th>FirstName:</th>
-            <th>Technician:</th>
-            <th>Email:</th>
-            <th>Password:</th>
-            <th>Hostname:</th>
-        </tr>
-
-        <?php
-        var_dump($_SESSION["Users"]);
-        
-        foreach ($_SESSION["Users"] as $key => $value) {
-            $sqlSelect = $connection->prepare("INSERT INTO User (UserNo, LastName, FirstName, Technician, Email, Passwd, HostName) values (?,?,?,?,?,?,?)");
-            $sqlSelect->bind_param("issssss", $key, $value);
-            $selectionWentOk = $sqlSelect->execute();
-
-            if ($selectionWentOk) {
-                $result = $sqlSelect->get_result();
-                $row = $result->fetch_assoc();
-        ?>
-                <tr>
-                    <td><?= $row["UserNo"] ?></td>
-                    <td><?= $row["LastName"] ?></td>
-                    <td><?= $row["FirstName"] ?></td>
-                    <td><?= $row["Technician"] ?></td>
-                    <td><?= $row["Email"] ?></td>
-                    <td><?= $row["Passwd"] ?></td>
-                    <td><?= $row["HostName"] ?></td>
-                    <td>
-                        <form method="POST">
-                            <input type="hidden" name="UserToDelete" value="<?= $key ?>">
-                            <input type="submit" value="Remove">
-                        </form>
-                    </td>
-                </tr>
-        <?php
-            }
+        if(isset($_POST["UserToDelete"])){
+            $sqlDelete = $connection->prepare("Delete from Users where UserNo = ?");
+            if(!$sqlDelete)
+            die("Error in sql delete statement");
+            $sqlDelete->bind_param("i", $_POST["UserToDelete"]);
+            $sqlDelete->execute();
+            $sqlDelete->close();
         }
-        ?>
+
+        if(isset($_POST["UserToEdit"])){
+            $sqlEdit = $connection->prepare("Edit from Pins where UserNo = ?");
+            if(!$sqlEdit)
+            die("Error in sql delete statement");
+            $sqlDelete->bind_param("i", $_POST["UserToEdit"]);
+            $sqlDelete->execute();
+            $sqlDelete->close();
+        }
+
+        
+        $result = $connection->query("SELECT * from Users");
+
+        if($result){
+            while($row = $result->fetch_assoc()){
+                ?>
+                <table>
+                    <tr>
+                        <td><?= $row["UserNo"]?></td>
+                        <td><?= $row["Name"]?></td>
+                        <td><?= $row["FirstName"]?></td>
+                        <td><?= $row["Technician"]?></td>
+                        <td><?= $row["Email"]?></td>
+                        <td><?= $row["Passwd"]?></td>
+                        <td><?= $row["HostName"]?></td>
+                        <td>
+                            <form method="POST">
+                                <input type="hidden" name="UserToDelete" value="<?= $row["UserNo"]?>">
+                                <input type="submit" value="Remove">
+                            </form>
+                            <form method="POST">
+                                <input type="hidden" name="UserToEdit" value="<?= $row["UserNo"] ?>">
+                                <input type="submit" value="Edit">
+                            </form>
+                        </td>
+                    </tr>
+                    <?php
+            }
+        } else {
+            print "Something went wrong selecting data";
+        }
+
+        if(isset($_POST["UserNo"], $_POST["Name"], $_POST["FirstName"], $_POST["Technician"], $_POST["Email"], $_POST["Passwd"], $_POST["HostName"])){
+        $sqlInsert = $connection->prepare("INSERT INTO Users (UserNo, Name, FirstName, Technician, Email, Passwd, HostName) values (?,?,?,?,?,?,?)");
+        $sqlInsert->bind_param("issssss", $_POST["UserNo"], $_POST["Name"], $_POST["FirstName"], $_POST["Technician"], $_POST["Email"], $_POST["Passwd"], $_POST["HostName"]);
+        $resultOfExecute = $sqlInsert->execute();
+        if(!$resultOfExecute){
+            print "Adding a new User, failed!";
+        }
+    }
+    ?>
     </table>
+    <form method="POST">
+        Add a New User: <input name="UserNo" placeholder="nbr">
+        <input name="Name" placeholder="LastName">
+        <input name="FirstName" placeholder="FirstName">
+        <input name="Technician" placeholder="X">
+        <input name="Email" placeholder="Email">
+        <input name="Passwd" placeholder="Password">
+        <input name="HostName" placeholder="SB_nbr">
+        <input type="submit" value="Add">
+    </form>
 
 </body>
 

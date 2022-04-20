@@ -22,6 +22,24 @@ include_once "repif_db.php";
     include_once("technav.php");
     $result = $connection->query("SELECT * from Pin");
 
+    if(isset($_POST["pinToDelete"])){
+        $sqlDelete = $connection->prepare("Delete from Pins where UserNo = ?");
+        if(!$sqlDelete)
+        die("Error in sql delete statement");
+        $sqlDelete->bind_param("i", $_POST["UserToDelete"]);
+        $sqlDelete->execute();
+        $sqlDelete->close();
+    }
+
+    if(isset($_POST["pinToEdit"])){
+        $sqlEdit = $connection->prepare("Edit from Pins where PinNo = ?");
+        if(!$sqlEdit)
+        die("Error in sql delete statement");
+        $sqlDelete->bind_param("i", $_POST["pinToEdit"]);
+        $sqlDelete->execute();
+        $sqlDelete->close();
+    }
+
     if ($result) {
         while ($row = $result->fetch_assoc()) {
     ?>
@@ -36,12 +54,16 @@ include_once "repif_db.php";
                             <input type="hidden" name="pinToDelete" value="<?= $row["PinNo"] ?>">
                             <input type="submit" value="Remove">
                         </form>
+                        <form method="POST">
+                            <input type="hidden" name="pinToEdit" value="<?= $row["PinNo"] ?>">
+                            <input type="submit" value="Edit">
+                        </form>
                     </td>
                 </tr>
         <?php
         }
     } else {
-        print "Something went wrong selecting data";
+        print "Something went wrong with selecting data";
     }
 
     if (isset($_POST["HostName"], $_POST["PinNo"], $_POST["Input"], $_POST["Designation"])) {
