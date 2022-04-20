@@ -8,10 +8,10 @@ if(!isset($_SESSION["UserLoggedIn"])){
     $_SESSION["Pins"] = [];
 }*/
 
-$servername = "51.195.102.2";
-$username = "Kath";
-$password = "omi";
-$dbName = "Kath_db";
+$servername = "192.168.6.28";
+$username = "rocka840";
+$password = "Passw0rd!";
+$dbName = "REPIF_db";
 
 $connection = mysqli_connect($servername, $username, $password, $dbName);
 

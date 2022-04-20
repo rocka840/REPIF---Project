@@ -34,18 +34,22 @@
                    $_SESSION["isUserLoggedIn"] = true;
                    $_SESSION["CurrentUser"] = $_POST["Email"];
                    $_SESSION["UserRole"] = $row["UserRole"];
+
+                   if($row["Technician"]=="X"){
+                    header("Location: ../REPIF-Project/TechPage.php");
+                    die();
+                } else {
+                    header("Location: ../REPIF-Project/UsersPage.php");
+                    die();
+                }
+                
                } else {
                    print "Wrong password";
+                   var_dump($row["Passwd"]);
                }
             }
 
-            if($row["Technician"]=="X"){
-                header("Location: ../REPIF-Project/TechPage.php");
-                die();
-            } else {
-                header("Location: ../REPIF-Project/UsersPage.php");
-                die();
-            }
+            
            
         }
     ?>
