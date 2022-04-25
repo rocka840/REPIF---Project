@@ -1,7 +1,7 @@
 <?php
 function createGroupConf($connection, $input) {
     $groups = $connection->prepare("
-        SELECT `group`.GroupName, `group`.GroupNo, concern.PinNo FROM `group`
+        SELECT `Groups`.GroupName, `group`.GroupNo, concern.PinNo FROM `group`
         INNER JOIN concern ON concern.GroupNo = `group`.GroupNo
         WHERE `group`.SmartBox = ?
     ");
@@ -12,7 +12,7 @@ function createGroupConf($connection, $input) {
         INNER JOIN `group` ON `group`.SmartBox = ?
     ");
 
-    $groups->bind_param('s', $input["HostName"]);
+    $groups->bind_param('s', $input);
 
     $groups->execute();
 
@@ -20,7 +20,7 @@ function createGroupConf($connection, $input) {
 
     $groupsdata = $groupsresult->fetch_all(MYSQLI_ASSOC);
 
-    $scripts->bind_param('s', $input["HostName"]);
+    $scripts->bind_param('s', $input);
 
     $scripts->execute();
 
@@ -35,7 +35,7 @@ function createGroupConf($connection, $input) {
         array_push($content[$obj["GroupName"]], $obj["PinNo"]);
     }
 
-    $fp = fopen($_SERVER['DOCUMENT_ROOT'] . "/config/gl.txt", "wb");
+    $fp = fopen("/config/gl.txt", "wb");
 
     foreach($content as $i => $group) {
         $line = "".$i."=".implode(',', $group)."\n";
@@ -52,13 +52,13 @@ function createGroupConf($connection, $input) {
 
 function createExecConf($connection, $input) {
     $stmt= $connection->prepare("
-        SELECT * FROM switch_execute
+        SELECT * FROM Switch_Execute
         INNER JOIN pin ON pin.PinNo = switch_execute.PinNo
         INNER JOIN `group` ON `group`.GroupNo = switch_execute.GroupNo
         WHERE switch_execute.HostName = ? AND pin.HostName = switch_execute.HostName
     ");
 
-    $stmt->bind_param('s', $input["HostName"]);
+    $stmt->bind_param('s', $input);
 
     $stmt->execute();
 
@@ -66,7 +66,7 @@ function createExecConf($connection, $input) {
 
     $data = $result->fetch_all(MYSQLI_ASSOC);
 
-    $fp = fopen($_SERVER['DOCUMENT_ROOT'] . "/config/tefg.txt", "wb");
+    $fp = fopen("/config/tefg.txt", "wb");
 
     foreach($data as $exec) {
         $duration = $exec["WaitingDuration"] ? ", ".$exec["WaitingDuration"] : '';
@@ -77,14 +77,20 @@ function createExecConf($connection, $input) {
     fclose($fp);
 }
 
-function sendConf($connection, $input) {
+function sendConf($input) {
+    require("repif_db.php");
+
     createGroupConf($connection, $input);
     createExecConf($connection, $input);
 
-    $sshconnection = ssh2_connect('192.168.178.52', 22);
+    $sshconnection = ssh2_connect('192.168.6.207', 22); //ip address of the webserver
 
-    ssh2_auth_password($sshconnection, 'pi', 'phd');
+    ssh2_auth_password($sshconnection, 'pi', 'raspberry');
 
     ssh2_scp_send($sshconnection, $_SERVER['DOCUMENT_ROOT'] . "/config/gl.txt", '/home/pi/pif2122/data/gl.txt', 0644);
     ssh2_scp_send($sshconnection, $_SERVER['DOCUMENT_ROOT'] . "/config/tefg.txt", '/home/pi/pif2122/data/tefg.txt', 0644);
+}
+
+if(isset($_GET["hostname"])) {
+    sendConf($_GET["hostname"]);
 }

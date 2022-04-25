@@ -55,6 +55,7 @@
                             <input type="hidden" name="smartboxToEdit" value="<?= $row["HostName"] ?>">
                             <input type="submit" value="Edit">
                         </form>
+                        <a href="conf.php?hostname=<?=$row["HostName"]?>">creat config</a>
                     </td>
                 </tr>
         <?php
