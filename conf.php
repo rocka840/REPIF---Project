@@ -1,15 +1,15 @@
 <?php
 function createGroupConf($connection, $input) {
     $groups = $connection->prepare("
-        SELECT `Groups`.GroupName, `group`.GroupNo, concern.PinNo FROM `group`
-        INNER JOIN concern ON concern.GroupNo = `group`.GroupNo
-        WHERE `group`.SmartBox = ?
+        SELECT `Groups`.GroupName, `Groups`.GroupNo, Concern.PinNo FROM `Groups`
+        INNER JOIN Concern ON Concern.GroupNo = `Groups`.GroupNo
+        WHERE `Groups`.HostName = ?
     ");
 
     $scripts = $connection->prepare("
-        SELECT `use`.GroupNo, `use`.ScriptName, script.Path FROM `use`
-        INNER JOIN script ON script.ScriptName = `use`.ScriptName
-        INNER JOIN `group` ON `group`.SmartBox = ?
+        SELECT `Use`.GroupNo, `Use`.ScriptName, Script.Path FROM `Use`
+        INNER JOIN Script ON Script.ScriptName = `Use`.ScriptName
+        INNER JOIN `Groups` ON `Groups`.HostName = ?
     ");
 
     $groups->bind_param('s', $input);
@@ -53,9 +53,9 @@ function createGroupConf($connection, $input) {
 function createExecConf($connection, $input) {
     $stmt= $connection->prepare("
         SELECT * FROM Switch_Execute
-        INNER JOIN pin ON pin.PinNo = switch_execute.PinNo
-        INNER JOIN `group` ON `group`.GroupNo = switch_execute.GroupNo
-        WHERE switch_execute.HostName = ? AND pin.HostName = switch_execute.HostName
+        INNER JOIN Pin ON pin.PinNo = Switch_Execute.PinNo
+        INNER JOIN `Groups` ON `Groups`.GroupNo = Switch_Execute.GroupNo
+        WHERE Switch_Execute.HostName = ? AND Pin.HostName = switch_execute.HostName
     ");
 
     $stmt->bind_param('s', $input);
