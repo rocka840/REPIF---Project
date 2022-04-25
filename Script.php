@@ -10,7 +10,7 @@
 </head>
 <body>
     
-    <h1>Script</h1>
+    <h1>Script - Technician Configuration Pages</h1>
 
     <?php
     include_once("technav.php");

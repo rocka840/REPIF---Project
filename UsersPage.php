@@ -13,5 +13,7 @@
     include_once("usernav.php");
     ?>
 
+<p>Welcome to your smartbox configurations!</p>
+
 </body>
 </html>

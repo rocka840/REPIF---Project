@@ -31,7 +31,7 @@
         <a class="nav-link active" aria-current="page" href="UserPins.php">Pins</a>
         <a class="nav-link" href="UserSmartbox.php">Smartboxes</a>
         <a class="nav-link" href="UserScript.php">Scripts</a>
-        <a class="nav-link" href="UserGroups.php">Groups</a>
+        <a class="nav-link" href="UserGroup.php">Groups</a>
         <a class="nav-link" href="UsersUser.php">User</a>
       </div>
       <form class="container-fluid justify-content-start" method="POST">

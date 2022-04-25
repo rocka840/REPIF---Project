@@ -30,10 +30,10 @@
                $row = $result->fetch_assoc();
 
                if(password_verify($_POST["Psw"], $row["Passwd"])){
-                   die("You typed the correct password. You are now logged in");
                    $_SESSION["isUserLoggedIn"] = true;
                    $_SESSION["CurrentUser"] = $_POST["Email"];
                    $_SESSION["UserRole"] = $row["UserRole"];
+                   $_SESSION["UserNo"] = $row["UserNo"];
 
                    if($row["Technician"]=="X"){
                     header("Location: ../REPIF-Project/TechPage.php");
@@ -48,8 +48,6 @@
                    var_dump($row["Passwd"]);
                }
             }
-
-            
            
         }
     ?>

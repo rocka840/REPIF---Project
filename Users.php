@@ -1,7 +1,3 @@
-<?php
-include_once "repif_db.php";
-?>
-
 <!DOCTYPE html>
 <html>
 
@@ -34,7 +30,7 @@ include_once "repif_db.php";
         if(isset($_POST["UserToEdit"])){
             $sqlEdit = $connection->prepare("Edit from Pins where UserNo = ?");
             if(!$sqlEdit)
-            die("Error in sql delete statement");
+            die("Error in sql edit statement");
             $sqlDelete->bind_param("i", $_POST["UserToEdit"]);
             $sqlDelete->execute();
             $sqlDelete->close();

@@ -12,7 +12,7 @@
 
 <body>
 
-    <h1>Smartboxes</h1>
+    <h1>Smartboxes - Technician Configuration Pages</h1>
 
     <?php
     include_once("technav.php");

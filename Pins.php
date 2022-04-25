@@ -1,7 +1,3 @@
-<?php
-include_once "repif_db.php";
-?>
-
 <!DOCTYPE html>
 <html>
 
@@ -16,17 +12,18 @@ include_once "repif_db.php";
 
 <body>
 
-    <h1>Pins</h1>
+    <h1>Pins - Technician Configuration Pages</h1>
 
     <?php
+    include_once "repif_db.php";
     include_once("technav.php");
     $result = $connection->query("SELECT * from Pin");
 
     if(isset($_POST["pinToDelete"])){
-        $sqlDelete = $connection->prepare("Delete from Pins where UserNo = ?");
+        $sqlDelete = $connection->prepare("Delete from Pins where PinNo = ?");
         if(!$sqlDelete)
         die("Error in sql delete statement");
-        $sqlDelete->bind_param("i", $_POST["UserToDelete"]);
+        $sqlDelete->bind_param("i", $_POST["pinToDelete"]);
         $sqlDelete->execute();
         $sqlDelete->close();
     }

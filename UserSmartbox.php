@@ -12,54 +12,31 @@
 
 <body>
 
-    <h1>Smartboxes</h1>
+    <h1>Smartboxes - User Configuration Pages</h1>
 
     <?php
-    include_once("technav.php");
     include_once("repif_db.php");
+    include_once ("usernav.php");
 
-    $result = $connection->query("SELECT * from SmartBox");
-    
-    if(isset($_POST["smartboxToDelete"])){
-        $sqlDelete = $connection->prepare("Delete from Smartbox where HostName = ?");
-        if(!$sqlDelete)
-        die("Error in sql delete statement");
-        $sqlDelete->bind_param("i", $_POST["smartboxToDelete"]);
-        $sqlDelete->execute();
-        $sqlDelete->close();
-    }
-
-    if(isset($_POST["smartboxToEdit"])){
-        $sqlEdit = $connection->prepare("Edit from Pins where PinNo = ?");
-        if(!$sqlEdit)
-        die("Error in sql delete statement");
-        $sqlDelete->bind_param("i", $_POST["smartboxToEdit"]);
-        $sqlDelete->execute();
-        $sqlDelete->close();
-    }
-
-    if ($result) {
-        while ($row = $result->fetch_assoc()) {
+    $UserSmartbox = $connection->prepare("SELECT * from Manage m join SmartBox s on m.HostName = s.HostName where m.UserNo = ?");
+    $UserSmartbox->bind_param("i",$_SESSION["UserNo"]);
+    $UserSmartbox->execute();
+    $result = $UserSmartbox->get_result();
+    $UserSmartbox->close();
+    print("<table>");
+    while ($row = $result->fetch_assoc()) {
     ?>
-            <table>
-                <tr>
-                    <td><?= $row["HostName"] ?></td>
-                    <td><?= $row["Description"] ?></td>
-                    <td><?= $row["Location"] ?></td>
-                </tr>
-        <?php
-        }
-    } else {
-        print "Something went wrong with selecting data";
-    }
+        <tr>
+            <td><?= $row["Description"] ?></td>
+            <td><?= $row["Location"] ?></td>
+        </tr>
 
-    if(isset($_POST["HostName"], $_POST["Description"], $_POST["Location"])){
-        $sqlInsert = $connection->prepare("INSERT INTO SmartBox (HostName, Description, Location) values(?,?,?)");
-        $sqlInsert->bind_param("sss", $_POST["HostName"], $_POST["Description"], $_POST["Location"]);
-        $resultOfExecute = $sqlInsert->execute();
+    <?php
     }
-        ?>
-            </table>
+    print("</table>");
+
+
+    ?>
         
 </body>
 
