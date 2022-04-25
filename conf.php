@@ -35,7 +35,7 @@ function createGroupConf($connection, $input) {
         array_push($content[$obj["GroupName"]], $obj["PinNo"]);
     }
 
-    $fp = fopen("/config/gl.txt", "wb");
+    $fp = fopen("config/gl.txt", "wb", true);
 
     foreach($content as $i => $group) {
         $line = "".$i."=".implode(',', $group)."\n";
@@ -53,9 +53,9 @@ function createGroupConf($connection, $input) {
 function createExecConf($connection, $input) {
     $stmt= $connection->prepare("
         SELECT * FROM Switch_Execute
-        INNER JOIN Pin ON pin.PinNo = Switch_Execute.PinNo
+        INNER JOIN Pin ON Pin.PinNo = Switch_Execute.PinNo
         INNER JOIN `Groups` ON `Groups`.GroupNo = Switch_Execute.GroupNo
-        WHERE Switch_Execute.HostName = ? AND Pin.HostName = switch_execute.HostName
+        WHERE Switch_Execute.HostName = ? AND Pin.HostName = Switch_Execute.HostName
     ");
 
     $stmt->bind_param('s', $input);
@@ -66,7 +66,7 @@ function createExecConf($connection, $input) {
 
     $data = $result->fetch_all(MYSQLI_ASSOC);
 
-    $fp = fopen("/config/tefg.txt", "wb");
+    $fp = fopen("config/tefg.txt", "wb", true);
 
     foreach($data as $exec) {
         $duration = $exec["WaitingDuration"] ? ", ".$exec["WaitingDuration"] : '';
@@ -83,7 +83,7 @@ function sendConf($input) {
     createGroupConf($connection, $input);
     createExecConf($connection, $input);
 
-    $sshconnection = ssh2_connect('192.168.6.207', 22); //ip address of the webserver
+    $sshconnection = ssh2_connect('192.168.6.55', 22); //ip address of the webserver
 
     ssh2_auth_password($sshconnection, 'pi', 'raspberry');
 
