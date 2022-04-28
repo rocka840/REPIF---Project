@@ -106,16 +106,16 @@ INSERT INTO SmartBox (HostName, Description, Location)
 VALUES (“SB_23”,”ModelB”,”Building4-petshop”);
 
 INSERT INTO Pin (HostName, PinNo, Input, Designation)
-VALUES (“SB_1”,”7”,”X”, “GPIO4”); (X as 1)
+VALUES (“SB_1”,”7”,”X”, “GPIO4”);
 
 INSERT INTO Pin (HostName, PinNo, Input, Designation)
-VALUES (“SB_1”,”11”,”X”, “GPIO17”); (X as 1)
+VALUES (“SB_1”,”11”,”X”, “GPIO17”);
 
 INSERT INTO Pin (HostName, PinNo, Input, Designation)
-VALUES (“SB_7”,”33”, “0”, “GPIO13”); (empty as 0)
+VALUES (“SB_7”,”33”, “0”, “GPIO13”);
 
 INSERT INTO Pin (HostName, PinNo, Input, Designation)
-VALUES (“SB_23”,”35”, “0”, “GPIO19”); (empty as 0)
+VALUES (“SB_23”,”35”, “0”, “GPIO19”);
 
 INSERT INTO Groups (GroupNo, GroupName, Description, HostName)
 VALUES (1,”CHIEF”,”Lamps in the kitchen”, “SB_7”); 

@@ -24,7 +24,7 @@
   ?>
 
 
-  <nav class="navbar navbar-expand-lg navbar-light" style="background-color:mediumseagreen;">
+  <nav class="navbar navbar-expand-lg navbar-light" style="background-color:papayawhip;">
     <div class="container-fluid">
       <a class="navbar-brand" href="TechPage.php">Home</a>
       <div class="navbar-nav">
@@ -34,11 +34,11 @@
         <a class="nav-link" href="Users.php">Users</a>
       </div>
       <form class="container-fluid justify-content-start" method="POST">
-        <input class="btn btn-outline-success me-2" value="logout" name="logout" type="submit">
+        <input class="btn btn-outline-dark me-2" value="logout" name="logout" type="submit">
       </form>
     </div>
   </nav>
-
+  <br>
 </body>
 
 </html>
