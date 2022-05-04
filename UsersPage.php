@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title> Login Page </title>
-<link rel='stylesheet' type='text/css' media='screen' href='Login.css'>
+<link rel='stylesheet' type='text/css' media='screen' href='main.css'>
 </head>
 
 <body>

@@ -29,7 +29,7 @@
     }
 
     if(isset($_POST["pinToEdit"])){
-        $sqlEdit = $connection->prepare("Edit from Pins where PinNo = ?");
+        $sqlEdit = $connection->prepare("UPDATE from Pins where PinNo = ?");
         if(!$sqlEdit)
         die("Error in sql delete statement");
         $sqlDelete->bind_param("i", $_POST["pinToEdit"]);

@@ -13,80 +13,114 @@
 
 <body>
 
-    <h1 style="text-align:center" >Smartboxes - Technician Configuration Pages</h1>
+    <h1 style="text-align:center">Smartboxes - Technician Configuration Pages</h1>
 
     <?php
     include_once("technav.php");
     include_once("repif_db.php");
 
     $result = $connection->query("SELECT * from SmartBox");
-    
-    if(isset($_POST["smartboxToDelete"])){
+
+    if (isset($_POST["smartboxToDelete"])) {
         $sqlDelete = $connection->prepare("Delete from Smartbox where HostName = ?");
-        if(!$sqlDelete)
-        die("Error in sql delete statement");
+        if (!$sqlDelete)
+            die("Error in sql delete statement");
         $sqlDelete->bind_param("i", $_POST["smartboxToDelete"]);
         $sqlDelete->execute();
         $sqlDelete->close();
     }
 
-    if(isset($_POST["smartboxToEdit"])){
-        $sqlEdit = $connection->prepare("Edit from Pins where PinNo = ?");
-        if(!$sqlEdit)
-        die("Error in sql delete statement");
-        $sqlDelete->bind_param("i", $_POST["smartboxToEdit"]);
-        $sqlDelete->execute();
-        $sqlDelete->close();
-    }
+    if (isset($_POST["smartboxToEdit"])) {
+        $sqlEditSmartbox = intval($_POST["smartboxToEdit"]);
+        $sqlSelect = $connection->prepare("SELECT * FROM SmartBox WHERE HostName=?");
+        $sqlSelect->bind_param("i", $sqlEditSmartbox);
+        $sqlSelect->execute();
+        $result = $sqlSelect->get_result();
+        $data = $result->fetch_all(MYSQLI_ASSOC);
 
-    if ($result) {
-        while ($row = $result->fetch_assoc()) {
     ?>
-            <table class="table table-hover table-success">
-                <tr>
-                    <th>HostName</th>
-                    <th>Description</th>
-                    <th>Location</th>
-                    <th>Buttons</th>
-                </tr>
-                <tr>
-                    <td><?= $row["HostName"] ?></td>
-                    <td><?= $row["Description"] ?></td>
-                    <td><?= $row["Location"] ?></td>
-                    <td>
-                        <form method="POST">
-                            <input type="hidden" name="smartboxToDelete" value="<?= $row["HostName"] ?>">
-                            <input type="submit" value="Remove" class="btn btn-outline-dark">
-                        </form>
-                        <form method="POST">
-                            <input type="hidden" name="smartboxToEdit" value="<?= $row["HostName"] ?>">
-                            <input type="submit" value="Edit" class="btn btn-outline-dark">
-                        </form>
-                        <a href="conf.php?hostname=<?=$row["HostName"]?>" class="link-dark">create config</a>
-                    </td>
-                </tr>
+        <form method="POST">
+            <div>
+                <label>Smartbox</label>
+                <input type="text" name="hostnameEdit" value="<?= $data[0]["HostName"] ?>">
+                <input type="hidden" name="hostnameSearch" value="<?= $data[0]["HostName"] ?>">
+            </div>
+
+            <div>
+                <label>Description</label>
+                <input type="text" name="descriptionEdit" value="<?= $data[0]["Description"] ?>">
+                <input type="hidden" name="descriptionSearch" value="<?= $data[0]["Description"] ?>">
+            </div>
+            <div>
+                <label>Location</label>
+                <input type="text" name="locationEdit" value="<?= $data["Location"] ?>">
+            </div>
+            <button type="submit">Submit</button>
+        </form>
         <?php
         }
-    } else {
-        print "Something went wrong with selecting data";
-    }
+    
+        if(isset($_POST["hostnameEdit"], $_POST["descriptionEdit"], $_POST["locationEdit"])){
+            $sqlUpdate = $connection->prepare("UPDATE SmartBox SET HostName=?, Description=?, Location=?");
 
-    if(isset($_POST["HostName"], $_POST["Description"], $_POST["Location"])){
-        $sqlInsert = $connection->prepare("INSERT INTO SmartBox (HostName, Description, Location) values(?,?,?)");
-        $sqlInsert->bind_param("sss", $_POST["HostName"], $_POST["Description"], $_POST["Location"]);
-        $resultOfExecute = $sqlInsert->execute();
-        if (!$resultOfExecute) {
-            print "Adding a new smartbox, failed!";
+            if(!$sqlUpdate){
+                die("SmartBox couldnt be updated");
+            }
+            
+            $sqlUpdate->bind_param("iss", $_POST["hostnameEdit"], $_POST["descriptionEdit"], $_POST["locationEdit"]);
+            $sqlUpdate->execute();
+
+            header("refresh: 0");
         }
-    }
+
+        if ($result) {
+        while ($row = $result->fetch_assoc()) {
         ?>
-            </table>
-            <form method="POST">
-                Add a New Smartbox: <input name="HostName" placeholder="SB_nbr">
-                <input name="Description" placeholder="Model letter">
-                <input name="Location" placeholder="Building nbr, place">
-                <input type="submit" value="Add">
-            </form>
+        <table class="table table-hover table-success">
+            <tr>
+                <th>HostName</th>
+                <th>Description</th>
+                <th>Location</th>
+                <th>Buttons</th>
+            </tr>
+            <tr>
+                <td><?= $row["HostName"] ?></td>
+                <td><?= $row["Description"] ?></td>
+                <td><?= $row["Location"] ?></td>
+                <td>
+                    <form method="POST">
+                        <input type="hidden" name="smartboxToDelete" value="<?= $row["HostName"] ?>">
+                        <input type="submit" value="Remove" class="btn btn-outline-dark">
+                    </form>
+                    <form method="POST">
+                        <input type="hidden" name="smartboxToEdit" value="<?= $row["HostName"] ?>">
+                        <input type="submit" value="Edit" class="btn btn-outline-dark">
+                    </form>
+                    <a href="conf.php?hostname=<?= $row["HostName"] ?>" class="link-dark">create config</a>
+                </td>
+            </tr>
+    <?php
+                    }
+                } else {
+                    print "Something went wrong with selecting data";
+                }
+
+                if (isset($_POST["HostName"], $_POST["Description"], $_POST["Location"])) {
+                    $sqlInsert = $connection->prepare("INSERT INTO SmartBox (HostName, Description, Location) values(?,?,?)");
+                    $sqlInsert->bind_param("sss", $_POST["HostName"], $_POST["Description"], $_POST["Location"]);
+                    $resultOfExecute = $sqlInsert->execute();
+                    if (!$resultOfExecute) {
+                        print "Adding a new smartbox, failed!";
+                    }
+                }
+    ?>
+        </table>
+        <form method="POST">
+            Add a New Smartbox: <input name="HostName" placeholder="SB_nbr">
+            <input name="Description" placeholder="Model letter">
+            <input name="Location" placeholder="Building nbr, place">
+            <input type="submit" value="Add">
+        </form>
 </body>
 
 </html>
