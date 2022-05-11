@@ -17,30 +17,72 @@
     <?php
     include_once "repif_db.php";
     include_once("technav.php");
-    $result = $connection->query("SELECT * from Pin");
+    $result = $connection->query("SELECT * FROM Pin");
 
-    if(isset($_POST["pinToDelete"])){
+    if (isset($_POST["pinToDelete"])) {
         $sqlDelete = $connection->prepare("Delete from Pins where PinNo = ?");
-        if(!$sqlDelete)
-        die("Error in sql delete statement");
+        if (!$sqlDelete)
+            die("Error in sql delete statement");
         $sqlDelete->bind_param("i", $_POST["pinToDelete"]);
         $sqlDelete->execute();
         $sqlDelete->close();
     }
 
-    if(isset($_POST["pinToEdit"])){
-        $sqlEdit = $connection->prepare("UPDATE from Pins where PinNo = ?");
-        if(!$sqlEdit)
-        die("Error in sql delete statement");
-        $sqlDelete->bind_param("i", $_POST["pinToEdit"]);
-        $sqlDelete->execute();
-        $sqlDelete->close();
+    if (isset($_POST["pinToEdit"])) {
+        $sqlEditPins = $_POST["pinToEdit"];
+        $sqlSelect = $connection->prepare("SELECT * FROM Pin WHERE PinNo = ?");
+        $sqlSelect->bind_param("i", $sqlEditPins);
+        $sqlSelect->execute();
+        $result = $sqlSelect->get_result();
+        $data = $result->fetch_all(MYSQLI_ASSOC);
+    ?>
+        <form method="POST">
+            <div>
+                <label>HostName</label>
+                <input type="text" name="hostnameEdit" value="<?= $data[0]["HostName"] ?>">
+                <input type="hidden" name="hostnameSearch" value="<?= $data[0]["HostName"] ?>">
+            </div>
+            <div>
+                <label>PinNo</label>
+                <input type="text" name="pinnoEdit" value="<?= $data[0]["PinNo"] ?>">
+                <input type="hidden" name="pinnoSearch" value="<?= $data[0]["PinNo"] ?>">
+            </div>
+            <div>
+                <label>Input</label>
+                <input type="text" name="inputEdit" value="<?= $data[0]["Input"] ?>">
+                <input type="hidden" name="inputSearch" value="<?= $data[0]["Input"] ?>">
+            </div>
+            <div>
+                <label>Designation</label>
+                <input type="text" name="designationEdit" value="<?= $data[0]["Designation"] ?>">
+                <input type="hidden" name="designationSearch" value="<?= $data[0]["Designation"] ?>">
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+        <?php
+    }
+    if (isset($_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["inputEdit"], $_POST["designationEdit"])) {
+        $sqlUpdate = $connection->prepare("UPDATE Pin SET HostName=?, PinNo=?, Input=?, Designation=? WHERE PinNo = ?");
+        if (!$sqlUpdate) {
+            die("Pins couldnt be updated");
+        }
+        $sqlUpdate->bind_param("siisi", $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["inputEdit"], $_POST["designationEdit"], $_POST["pinnoEdit"]);
+        $sqlUpdate->execute();
+
+        header("refresh: 0");
     }
 
     if ($result) {
         while ($row = $result->fetch_assoc()) {
-    ?>
+        ?>
             <table>
+                <tr>
+                    <th>HostName</th>
+                    <th>PinNo</th>
+                    <th>Input</th>
+                    <th>Designation</th>
+                    <th>Buttons</th>
+                </tr>
                 <tr>
                     <td><?= $row["HostName"] ?></td>
                     <td><?= $row["PinNo"] ?></td>

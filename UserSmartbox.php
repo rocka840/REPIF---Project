@@ -26,10 +26,17 @@
     print("<table>");
     while ($row = $result->fetch_assoc()) {
     ?>
+    <table>
+    <tr>
+        <th>Description</th>
+        <th>Location</th>
+    </tr>
         <tr>
             <td><?= $row["Description"] ?></td>
             <td><?= $row["Location"] ?></td>
         </tr>
+    </table>
+        
 
     <?php
     }

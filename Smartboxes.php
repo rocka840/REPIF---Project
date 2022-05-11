@@ -31,17 +31,16 @@
     }
 
     if (isset($_POST["smartboxToEdit"])) {
-        $sqlEditSmartbox = intval($_POST["smartboxToEdit"]);
+        $sqlEditSmartbox = $_POST["smartboxToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM SmartBox WHERE HostName=?");
-        $sqlSelect->bind_param("i", $sqlEditSmartbox);
+        $sqlSelect->bind_param("s", $sqlEditSmartbox);
         $sqlSelect->execute();
         $result = $sqlSelect->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
-
     ?>
         <form method="POST">
             <div>
-                <label>Smartbox</label>
+                <label>HostName</label>
                 <input type="text" name="hostnameEdit" value="<?= $data[0]["HostName"] ?>">
                 <input type="hidden" name="hostnameSearch" value="<?= $data[0]["HostName"] ?>">
             </div>
@@ -53,7 +52,7 @@
             </div>
             <div>
                 <label>Location</label>
-                <input type="text" name="locationEdit" value="<?= $data["Location"] ?>">
+                <input type="text" name="locationEdit" value="<?= $data[0]["Location"] ?>">
             </div>
             <button type="submit">Submit</button>
         </form>
@@ -61,13 +60,13 @@
         }
     
         if(isset($_POST["hostnameEdit"], $_POST["descriptionEdit"], $_POST["locationEdit"])){
-            $sqlUpdate = $connection->prepare("UPDATE SmartBox SET HostName=?, Description=?, Location=?");
+            $sqlUpdate = $connection->prepare("UPDATE SmartBox SET HostName=?, Description=?, Location=? WHERE HostName = ?");
 
             if(!$sqlUpdate){
                 die("SmartBox couldnt be updated");
             }
             
-            $sqlUpdate->bind_param("iss", $_POST["hostnameEdit"], $_POST["descriptionEdit"], $_POST["locationEdit"]);
+            $sqlUpdate->bind_param("ssss", $_POST["hostnameEdit"], $_POST["descriptionEdit"], $_POST["locationEdit"], $_POST["hostnameEdit"]);
             $sqlUpdate->execute();
 
             header("refresh: 0");
