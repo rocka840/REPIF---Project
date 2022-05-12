@@ -8,43 +8,44 @@
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
     <script src='main.js'></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 
 <body>
 
-    <h1>Smartboxes - User Configuration Pages</h1>
+    <h1 style="text-align:center">Smartboxes - User Configuration Pages</h1>
 
     <?php
+    include_once("usernav.php");
     include_once("repif_db.php");
-    include_once ("usernav.php");
 
-    $UserSmartbox = $connection->prepare("SELECT * from Manage m join SmartBox s on m.HostName = s.HostName where m.UserNo = ?");
-    $UserSmartbox->bind_param("i",$_SESSION["UserNo"]);
-    $UserSmartbox->execute();
-    $result = $UserSmartbox->get_result();
-    $UserSmartbox->close();
-    print("<table>");
-    while ($row = $result->fetch_assoc()) {
-    ?>
-    <table>
-    <tr>
-        <th>Description</th>
-        <th>Location</th>
-    </tr>
-        <tr>
-            <td><?= $row["Description"] ?></td>
-            <td><?= $row["Location"] ?></td>
-        </tr>
-    </table>
-        
 
+    $sqlSelect = $connection->prepare("SELECT * from User u JOIN Smartbox s ON u.HostName = s.HostName where s.HostName = ?");
+    $sqlSelect->bind_param("i", $_SESSION["HostName"]);
+    $sqlSelect->execute();
+    $result = $sqlSelect->get_result();
+
+        if ($result) {
+        while ($row = $result->fetch_assoc()) {
+        ?>
+        <table class="table table-hover table-success">
+            <tr>
+                <th>HostName</th>
+                <th>Description</th>
+                <th>Location</th>
+            </tr>
+            <tr>
+                <td><?= $row["HostName"] ?></td>
+                <td><?= $row["Description"] ?></td>
+                <td><?= $row["Location"] ?></td>
+            </tr>
     <?php
-    }
-    print("</table>");
-
-
+                    }
+                } else {
+                    print "Something went wrong with selecting data";
+                }
     ?>
-        
+        </table>
 </body>
 
 </html>
