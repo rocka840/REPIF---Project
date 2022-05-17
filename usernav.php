@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+                                                                                                                            <!DOCTYPE html>
 <html>
 
 <head>
@@ -28,10 +28,12 @@
     <div class="container-fluid">
       <a class="navbar-brand" href="UsersPage.php">Home</a>
       <div class="navbar-nav">
+      <a class="nav-link" href="UserSmartbox.php">Smartboxes</a>
         <a class="nav-link active" aria-current="page" href="UserPins.php">Pins</a>
-        <a class="nav-link" href="UserSmartbox.php">Smartboxes</a>
-        <a class="nav-link" href="UserScript.php">Scripts</a>
+        <a class="nav-link" href="UserEvents.php">Events</a>
         <a class="nav-link" href="UserGroup.php">Groups</a>
+        <a class="nav-link" href="UsersSwitchExecute.php">Switch-Execute</a>
+        <a class="nav-link" href="UserScript.php">Scripts</a>
         <a class="nav-link" href="UsersUser.php">User</a>
       </div>
       <form class="container-fluid justify-content-start" method="POST">

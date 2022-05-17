@@ -8,7 +8,7 @@ if(!isset($_SESSION["UserLoggedIn"])){
     $_SESSION["Pins"] = [];
 }*/
 
-$servername = "10.0.0.78";
+$servername = "192.168.6.55";
 $username = "rocka840";
 $password = "Passw0rd!";
 $dbName = "REPIF_db";
