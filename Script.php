@@ -12,7 +12,7 @@
 
 <body>
 
-    <h1>Script - Technician Configuration Pages</h1>
+    <h1 style="text-align:center">Script - Technician Configuration Pages</h1>
 
     <?php
     include_once("technav.php");
@@ -29,6 +29,16 @@
         $sqlDelete->close();
     }
 
+    if (isset($_POST["scriptnameEdit"], $_POST["pathEdit"], $_POST["descriptionEdit"])) {
+        $sqlUpdate = $connection->prepare("UPDATE Script SET ScriptName=?, Path=?, Description=? WHERE ScriptName = ?");
+        if (!$sqlUpdate) {
+            die("Script couldnt be updated");
+        }
+        $sqlUpdate->bind_param("ssss", $_POST["scriptnameEdit"], $_POST["pathEdit"], $_POST["descriptionEdit"], $_POST["scriptnameEdit"]);
+        $sqlUpdate->execute();
+
+        header("refresh: 0");
+    }
     if (isset($_POST["scriptToEdit"])) {
         $sqlEditScript = $_POST["scriptToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM Script WHERE ScriptName=?");
@@ -56,22 +66,14 @@
             <button type="submit">Submit</button>
         </form>
         <?php
+        die();
     }
-    if (isset($_POST["scriptnameEdit"], $_POST["pathEdit"], $_POST["descriptionEdit"])) {
-        $sqlUpdate = $connection->prepare("UPDATE Script SET ScriptName=?, Path=?, Description=? WHERE ScriptName = ?");
-        if (!$sqlUpdate) {
-            die("Script couldnt be updated");
-        }
-        $sqlUpdate->bind_param("ssss", $_POST["scriptnameEdit"], $_POST["pathEdit"], $_POST["descriptionEdit"], $_POST["scriptnameEdit"]);
-        $sqlUpdate->execute();
-
-        header("refresh: 0");
-    }
+   
 
     if ($result) {
         while ($row = $result->fetch_assoc()) {
         ?>
-            <table>
+            <table class="table table-hover table-success">
                 <tr>
                     <th>ScriptName</th>
                     <th>Path</th>
@@ -85,11 +87,11 @@
                     <td>
                         <form method="POST">
                             <input type="hidden" name="scriptToDelete" value="<?= $row["ScriptName"] ?>">
-                            <input type="submit" value="Remove">
+                            <input type="submit" value="Remove" class="btn btn-outline-dark">
                         </form>
                         <form method="POST">
                             <input type="hidden" name="scriptToEdit" value="<?= $row["ScriptName"] ?>">
-                            <input type="submit" value="Edit">
+                            <input type="submit" value="Edit" class="btn btn-outline-dark">
                         </form>
                     </td>
                 </tr>

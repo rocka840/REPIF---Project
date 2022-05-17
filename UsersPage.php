@@ -8,7 +8,7 @@
 
 <body>
 
-<h1>User Configuration Pages</h1>
+<h1 style="text-align:center">User Configuration Pages</h1>
     <?php
     include_once("usernav.php");
     ?>

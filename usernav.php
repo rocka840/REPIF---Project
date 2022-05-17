@@ -23,24 +23,23 @@
   }
   ?>
 
-
-  <nav class="navbar navbar-expand-lg navbar-light" style="background-color:papayawhip;">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="UsersPage.php">Home</a>
-      <div class="navbar-nav">
-      <a class="nav-link" href="UserSmartbox.php">Smartboxes</a>
-        <a class="nav-link active" aria-current="page" href="UserPins.php">Pins</a>
-        <a class="nav-link" href="UserEvents.php">Events</a>
-        <a class="nav-link" href="UserGroup.php">Groups</a>
-        <a class="nav-link" href="UsersSwitchExecute.php">Switch-Execute</a>
-        <a class="nav-link" href="UserScript.php">Scripts</a>
-        <a class="nav-link" href="UsersUser.php">User</a>
-      </div>
-      <form class="container-fluid justify-content-start" method="POST">
-        <input class="btn btn-outline-dark me-2" value="logout" name="logout" type="submit">
-      </form>
-    </div>
-  </nav>
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color:papayawhip;">
+  <div class="container-fluid">
+  <a class="navbar-brand active" href="UsersPage.php">Home</a>
+  <div class="navbar-nav">
+    <a class="nav-link active" href="UserSmartbox.php">Smartboxes</a>
+    <a class="nav-link active" aria-current="page" href="UserPins.php">Pins</a>
+    <a class="nav-link active" href="UserEvents.php">Events</a>
+        <a class="nav-link active" href="UserGroup.php">Groups</a>
+        <a class="nav-link active" href="UsersSwitchExecute.php">Switch-Execute</a>
+        <a class="nav-link active" href="UserScript.php">Scripts</a>
+        <a class="nav-link active" href="UsersUser.php">User</a>
+        </div>
+    <form class="d-flex">
+      <input class="btn btn-outline-dark me-2 " value="logout" name="logout" type="submit">
+    </form>
+  </div>
+</nav>
   <br>
 </body>
 

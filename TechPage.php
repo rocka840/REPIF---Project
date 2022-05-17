@@ -8,7 +8,7 @@
 
 <body>
 
-    <h1>Technician Configuration Pages</h1>
+    <h1 style="text-align:center">Technician Configuration Pages</h1>
     <?php
     include_once("technav.php");
     ?>

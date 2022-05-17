@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 function createGroupConf($connection, $input) {
     $groups = $connection->prepare("
         SELECT `Groups`.GroupName, `Groups`.GroupNo, Concern.PinNo FROM `Groups`
@@ -10,6 +14,10 @@ function createGroupConf($connection, $input) {
         SELECT `Use`.GroupNo, `Use`.ScriptName, Script.Path FROM `Use`
         INNER JOIN Script ON Script.ScriptName = `Use`.ScriptName
         INNER JOIN `Groups` ON `Groups`.HostName = ?
+        GROUP BY
+            `Use`.GroupNo, `Use`.ScriptName
+        HAVING 
+            COUNT(*) > 1
     ");
 
     $groups->bind_param('s', $input);
@@ -35,7 +43,7 @@ function createGroupConf($connection, $input) {
         array_push($content[$obj["GroupName"]], $obj["PinNo"]);
     }
 
-    $fp = fopen("config/gl.txt", "wb", true);
+    $fp = fopen("config/gl.txt", "wb");
 
     foreach($content as $i => $group) {
         $line = "".$i."=".implode(',', $group)."\n";
@@ -66,11 +74,11 @@ function createExecConf($connection, $input) {
 
     $data = $result->fetch_all(MYSQLI_ASSOC);
 
-    $fp = fopen("config/tefg.txt", "wb", true);
+    $fp = fopen("config/tefg.txt", "wb");
 
     foreach($data as $exec) {
-        $duration = $exec["WaitingDuration"] ? ", ".$exec["WaitingDuration"] : '';
-        $line = "".$exec["Designation"].", ".$exec["EventCode"]."=".$exec["TargetFunctionCode"].", ".$exec["GroupName"].":".$exec["TargetFunctionCode"]."".$duration."\n";
+        $duration = $exec["WaitingDuration"] ? ",".$exec["WaitingDuration"] : '';
+        $line = "".$exec["Designation"].",".$exec["EventCode"]."=".$exec["TargetFunctionCode"].",".$exec["GroupName"].":".$exec["TargetFunctionCode"]."".$duration."\n";
         fwrite($fp, $line);
     }
 
@@ -78,19 +86,19 @@ function createExecConf($connection, $input) {
 }
 
 function sendConf($input) {
-    require("repif_db.php");
+    include_once("repif_db.php");
 
     createGroupConf($connection, $input);
     createExecConf($connection, $input);
 
-    $sshconnection = ssh2_connect('192.168.6.231', 22); //ip address of the webserver
+    $sshconnection = ssh2_connect('192.168.6.231', 22); // ip address of the rpi
 
-    ssh2_auth_password($sshconnection, 'pi', 'raspberry');
+    ssh2_auth_password($sshconnection, 'pi', 'raspberry'); // the password is the last field
 
-    ssh2_scp_send($sshconnection, $_SERVER['DOCUMENT_ROOT'] . "/config/gl.txt", '/home/pi/pif2122/data/gl.txt', 0644);
-    ssh2_scp_send($sshconnection, $_SERVER['DOCUMENT_ROOT'] . "/config/tefg.txt", '/home/pi/pif2122/data/tefg.txt', 0644);
+    ssh2_scp_send($sshconnection,"config/gl.txt", '/home/pi/pif2122/data/gl.txt', 0644);
+    ssh2_scp_send($sshconnection,"config/tefg.txt", '/home/pi/pif2122/data/tefg.txt', 0644);
 }
 
-if(isset($_GET["HostName"])) {
-    sendConf($_GET["HostName"]);
+if(isset($_GET["hostname"])) {
+    sendConf($_GET["hostname"]);
 }

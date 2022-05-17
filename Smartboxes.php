@@ -30,6 +30,18 @@
         $sqlDelete->close();
     }
 
+    if(isset($_POST["hostnameEdit"], $_POST["descriptionEdit"], $_POST["locationEdit"])){
+        $sqlUpdate = $connection->prepare("UPDATE SmartBox SET HostName=?, Description=?, Location=? WHERE HostName = ?");
+
+        if(!$sqlUpdate){
+            die("SmartBox couldnt be updated");
+        }
+        
+        $sqlUpdate->bind_param("ssss", $_POST["hostnameEdit"], $_POST["descriptionEdit"], $_POST["locationEdit"], $_POST["hostnameEdit"]);
+        $sqlUpdate->execute();
+
+        header("refresh: 0");
+    }
     if (isset($_POST["smartboxToEdit"])) {
         $sqlEditSmartbox = $_POST["smartboxToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM SmartBox WHERE HostName=?");
@@ -57,20 +69,10 @@
             <button type="submit">Submit</button>
         </form>
         <?php
+        die();
         }
     
-        if(isset($_POST["hostnameEdit"], $_POST["descriptionEdit"], $_POST["locationEdit"])){
-            $sqlUpdate = $connection->prepare("UPDATE SmartBox SET HostName=?, Description=?, Location=? WHERE HostName = ?");
-
-            if(!$sqlUpdate){
-                die("SmartBox couldnt be updated");
-            }
-            
-            $sqlUpdate->bind_param("ssss", $_POST["hostnameEdit"], $_POST["descriptionEdit"], $_POST["locationEdit"], $_POST["hostnameEdit"]);
-            $sqlUpdate->execute();
-
-            header("refresh: 0");
-        }
+        
 
         if ($result) {
         while ($row = $result->fetch_assoc()) {

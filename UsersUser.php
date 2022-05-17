@@ -12,7 +12,7 @@
 
 <body>
 
-    <h1>Users - User Configuration Pages</h1>
+    <h1 style="text-align:center">Users - User Configuration Pages</h1>
 
     <?php
     include_once("usernav.php");
@@ -89,7 +89,7 @@
     if ($result) {
         while ($row = $result->fetch_assoc()) {
         ?>
-            <table>
+            <table class="table table-hover table-success">
                 <tr>
                     <th>UserNo</th>
                     <th>Name</th>
@@ -111,7 +111,7 @@
                     <td>
                         <form method="POST">
                             <input type="hidden" name="UserToEdit" value="<?= $row["UserNo"] ?>">
-                            <input type="submit" value="Edit">
+                            <input type="submit" value="Edit" class="btn btn-outline-dark">
                         </form>
                     </td>
                 </tr>

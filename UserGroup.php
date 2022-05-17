@@ -13,7 +13,7 @@
 
 <body>
 
-    <h1 style="text-align:center">Groups - User Configuration Pages</h1>
+    <h1 style="text-align:center;">Groups - User Configuration Pages</h1>
 
     <?php
     include_once("usernav.php");

@@ -12,7 +12,7 @@
 
 <body>
 
-    <h1>Users - Technician Configuration Pages</h1>
+    <h1 style="text-align:center">Users - Technician Configuration Pages</h1>
 
     <?php
     include_once("technav.php");
@@ -25,6 +25,19 @@
         $sqlDelete->bind_param("i", $_POST["UserToDelete"]);
         $sqlDelete->execute();
         $sqlDelete->close();
+    }
+
+    if (isset($_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"])) {
+        $sqlUpdate = $connection->prepare("UPDATE Users SET UserNo=?, Name=?, FirstName=?, Technician=?, Email=?, Passwd=?, HostName=? WHERE UserNo = ?");
+
+        if (!$sqlUpdate) {
+            die("User couldnt be updated");
+        }
+
+        $sqlUpdate->bind_param("issssssi", $_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"], $_POST["usernoEdit"]);
+        $sqlUpdate->execute();
+
+        header("refresh: 0");
     }
 
     if (isset($_POST["UserToEdit"])) {
@@ -74,19 +87,9 @@
             <button type="submit">Submit</button>
         </form>
         <?php
+        die();
     }
-    if (isset($_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"])) {
-        $sqlUpdate = $connection->prepare("UPDATE Users SET UserNo=?, Name=?, FirstName=?, Technician=?, Email=?, Passwd=?, HostName=? WHERE UserNo = ?");
-
-        if (!$sqlUpdate) {
-            die("User couldnt be updated");
-        }
-
-        $sqlUpdate->bind_param("issssssi", $_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"], $_POST["usernoEdit"]);
-        $sqlUpdate->execute();
-
-        header("refresh: 0");
-    }
+    
 
 
     $result = $connection->query("SELECT * from Users");
@@ -94,7 +97,7 @@
     if ($result) {
         while ($row = $result->fetch_assoc()) {
         ?>
-            <table>
+            <table class="table table-hover table-success">
                 <tr>
                     <th>UserNo</th>
                     <th>Name</th>
@@ -116,11 +119,11 @@
                     <td>
                         <form method="POST">
                             <input type="hidden" name="UserToDelete" value="<?= $row["UserNo"] ?>">
-                            <input type="submit" value="Remove">
+                            <input type="submit" value="Remove" class="btn btn-outline-dark">
                         </form>
                         <form method="POST">
                             <input type="hidden" name="UserToEdit" value="<?= $row["UserNo"] ?>">
-                            <input type="submit" value="Edit">
+                            <input type="submit" value="Edit" class="btn btn-outline-dark">
                         </form>
                     </td>
                 </tr>

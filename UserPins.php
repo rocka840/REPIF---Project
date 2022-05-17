@@ -12,7 +12,7 @@
 
 <body>
 
-    <h1>Pins - User Configuration Pages</h1>
+    <h1 style="text-align:center">Pins - User Configuration Pages</h1>
 
     <?php
     include_once "repif_db.php";
@@ -28,6 +28,16 @@
         $sqlDelete->close();
     }
 
+    if (isset($_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["inputEdit"], $_POST["designationEdit"])) {
+        $sqlUpdate = $connection->prepare("UPDATE Pin SET HostName=?, PinNo=?, Input=?, Designation=? WHERE PinNo = ?");
+        if (!$sqlUpdate) {
+            die("Pins couldnt be updated");
+        }
+        $sqlUpdate->bind_param("siisi", $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["inputEdit"], $_POST["designationEdit"], $_POST["pinnoEdit"]);
+        $sqlUpdate->execute();
+
+        header("refresh: 0");
+    }
     if (isset($_POST["pinToEdit"])) {
         $sqlEditPins = $_POST["pinToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM Pin WHERE PinNo = ?");
@@ -60,17 +70,9 @@
             <button type="submit">Submit</button>
         </form>
         <?php
+        die();
     }
-    if (isset($_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["inputEdit"], $_POST["designationEdit"])) {
-        $sqlUpdate = $connection->prepare("UPDATE Pin SET HostName=?, PinNo=?, Input=?, Designation=? WHERE PinNo = ?");
-        if (!$sqlUpdate) {
-            die("Pins couldnt be updated");
-        }
-        $sqlUpdate->bind_param("siisi", $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["inputEdit"], $_POST["designationEdit"], $_POST["pinnoEdit"]);
-        $sqlUpdate->execute();
-
-        header("refresh: 0");
-    }
+   
 
         $sqlSelect = $connection->prepare("SELECT * from Users u JOIN Pin p ON u.HostName = p.HostName where p.HostName = ?");
         $sqlSelect->bind_param("i", $_SESSION["CurrentUser"]);
@@ -81,7 +83,7 @@
     if ($result) {
         while ($row = $result->fetch_assoc()) {
         ?>
-            <table>
+            <table class="table table-hover table-success">
                 <tr>
                     <th>HostName</th>
                     <th>PinNo</th>
@@ -97,11 +99,11 @@
                     <td>
                         <form method="POST">
                             <input type="hidden" name="pinToDelete" value="<?= $row["PinNo"] ?>">
-                            <input type="submit" value="Remove">
+                            <input type="submit" value="Remove" class="btn btn-outline-dark">
                         </form>
                         <form method="POST">
                             <input type="hidden" name="pinToEdit" value="<?= $row["PinNo"] ?>">
-                            <input type="submit" value="Edit">
+                            <input type="submit" value="Edit" class="btn btn-outline-dark">
                         </form>
                     </td>
                 </tr>
