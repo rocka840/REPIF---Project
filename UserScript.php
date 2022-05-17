@@ -68,7 +68,7 @@
         header("refresh: 0");
     }
 
-    $sqlSelect = $connection->prepare("SELECT * from Users u JOIN Script s ON u.HostName = s.ScriptName where u.HostName = ?");
+    $sqlSelect = $connection->prepare("SELECT * from Users u JOIN Script s  JOIN Use ON u.HostName = s.ScriptName where use.GroupNo = ?");
     $sqlSelect->bind_param("i", $_SESSION["CurrentUser"]);
     $sqlSelect->execute();
     $result = $sqlSelect->get_result();

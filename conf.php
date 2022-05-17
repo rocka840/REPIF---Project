@@ -91,6 +91,6 @@ function sendConf($input) {
     ssh2_scp_send($sshconnection, $_SERVER['DOCUMENT_ROOT'] . "/config/tefg.txt", '/home/pi/pif2122/data/tefg.txt', 0644);
 }
 
-if(isset($_GET["hostname"])) {
-    sendConf($_GET["hostname"]);
+if(isset($_GET["HostName"])) {
+    sendConf($_GET["HostName"]);
 }

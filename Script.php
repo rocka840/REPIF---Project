@@ -84,7 +84,7 @@
                     <td><?= $row["Description"] ?></td>
                     <td>
                         <form method="POST">
-                            <input type="hidden" name="scriptToDelete" value="<?= ["ScriptName"] ?>">
+                            <input type="hidden" name="scriptToDelete" value="<?= $row["ScriptName"] ?>">
                             <input type="submit" value="Remove">
                         </form>
                         <form method="POST">
