@@ -83,7 +83,7 @@ function sendConf($input) {
     createGroupConf($connection, $input);
     createExecConf($connection, $input);
 
-    $sshconnection = ssh2_connect('192.168.6.55', 22); //ip address of the webserver
+    $sshconnection = ssh2_connect('192.168.6.231', 22); //ip address of the webserver
 
     ssh2_auth_password($sshconnection, 'pi', 'raspberry');
 
