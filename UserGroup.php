@@ -78,6 +78,11 @@
             header("refresh: 0");
         }
 
+        $sqlSelect = $connection->prepare("SELECT * from Users u JOIN Groups g ON u.HostName = g.HostName where g.HostName = ?");
+        $sqlSelect->bind_param("i", $_SESSION["CurrentUser"]);
+        $sqlSelect->execute();
+        $result = $sqlSelect->get_result();
+
         if ($result) {
         while ($row = $result->fetch_assoc()) {
         ?>

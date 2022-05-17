@@ -20,8 +20,8 @@
     include_once("repif_db.php");
 
 
-    $sqlSelect = $connection->prepare("SELECT * from User u JOIN Smartbox s ON u.HostName = s.HostName where s.HostName = ?");
-    $sqlSelect->bind_param("i", $_SESSION["HostName"]);
+    $sqlSelect = $connection->prepare("SELECT * from Users u JOIN SmartBox s ON u.HostName = s.HostName where s.HostName = ?");
+    $sqlSelect->bind_param("i", $_SESSION["CurrentUser"]);
     $sqlSelect->execute();
     $result = $sqlSelect->get_result();
 

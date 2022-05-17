@@ -18,56 +18,110 @@
     include_once("usernav.php");
     include_once("repif_db.php");
 
+
     if (isset($_POST["UserToEdit"])) {
-        $sqlEdit = $connection->prepare("Edit from Pins where UserNo = ?");
-        if (!$sqlEdit)
-            die("Error in sql edit statement");
-        $sqlDelete->bind_param("i", $_POST["UserToEdit"]);
-        $sqlDelete->execute();
-        $sqlDelete->close();
-    }
-
-
-    $result = $connection->query("SELECT * from Users");
-
-    $UserSmartbox = $connection->prepare("SELECT * from Manage m join SmartBox s on m.HostName = s.HostName where m.UserNo = ?");
-    $UserSmartbox->bind_param("i", $_SESSION["UserNo"]);
-    $UserSmartbox->execute();
-    $result = $UserSmartbox->get_result();
-    $UserSmartbox->close();
-    print("<table>");
-    while ($row = $result->fetch_assoc()) {
+        $sqlEditUser = $_POST["UserToEdit"];
+        $sqlSelect = $connection->prepare("SELECT * FROM Users WHERE UserNo=?");
+        $sqlSelect->bind_param("i", $sqlEditUser);
+        $sqlSelect->execute();
+        $result = $sqlSelect->get_result();
+        $data = $result->fetch_all(MYSQLI_ASSOC);
     ?>
-        <tr>
-            <td><?= $row["UserNo"] ?></td>
-            <td><?= $row["Name"] ?></td>
-            <td><?= $row["FirstName"] ?></td>
-            <td><?= $row["Technician"] ?></td>
-            <td><?= $row["Email"] ?></td>
-            <td><?= $row["Passwd"] ?></td>
-            <td><?= $row["HostName"] ?></td>
-            <td>
-                <form method="POST">
-                    <input type="hidden" name="UserToEdit" value="<?= $row["UserNo"] ?>">
-                    <input type="submit" value="Edit">
-                </form>
-            </td>
-        </tr>
-
-    <?php
+        <form method="POST">
+            <div>
+                <label>UserNo</label>
+                <input type="text" name="usernoEdit" value="<?= $data[0]["UserNo"] ?>">
+                <input type="hidden" name="usernoSearch" value="<?= $data[0]["UserNo"] ?>">
+            </div>
+            <div>
+                <label>Name</label>
+                <input type="text" name="nameEdit" value="<?= $data[0]["Name"] ?>">
+                <input type="hidden" name="nameSearch" value="<?= $data[0]["Name"] ?>">
+            </div>
+            <div>
+                <label>FirstName</label>
+                <input type="text" name="firstnameEdit" value="<?= $data[0]["FirstName"] ?>">
+                <input type="hidden" name="firstnameSearch" value="<?= $data[0]["FirstName"] ?>">
+            </div>
+            <div>
+                <label>Technician</label>
+                <input type="text" name="technicianEdit" value="<?= $data[0]["Technician"] ?>">
+                <input type="hidden" name="technicianSearch" value="<?= $data[0]["Technician"] ?>">
+            </div>
+            <div>
+                <label>Email</label>
+                <input type="text" name="emailEdit" value="<?= $data[0]["Email"] ?>">
+                <input type="hidden" name="emailSearch" value="<?= $data[0]["Email"] ?>">
+            </div>
+            <div>
+                <label>Passwd</label>
+                <input type="text" name="passwdEdit" value="<?= $data[0]["Passwd"] ?>">
+                <input type="hidden" name="passwdSearch" value="<?= $data[0]["Passwd"] ?>">
+            </div>
+            <div>
+                <label>HostName</label>
+                <input type="text" name="hostnameEdit" value="<?= $data[0]["HostName"] ?>">
+                <input type="hidden" name="hostnameSearch" value="<?= $data[0]["HostName"] ?>">
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+        <?php
     }
-    print("</table>");
+    if (isset($_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"])) {
+        $sqlUpdate = $connection->prepare("UPDATE Users SET UserNo=?, Name=?, FirstName=?, Technician=?, Email=?, Passwd=?, HostName=? WHERE UserNo = ?");
 
-    if (isset($_POST["UserNo"], $_POST["Name"], $_POST["FirstName"], $_POST["Technician"], $_POST["Email"], $_POST["Passwd"], $_POST["HostName"])) {
-        $sqlInsert = $connection->prepare("INSERT INTO Users (UserNo, Name, FirstName, Technician, Email, Passwd, HostName) values (?,?,?,?,?,?,?)");
-        $sqlInsert->bind_param("issssss", $_POST["UserNo"], $_POST["Name"], $_POST["FirstName"], $_POST["Technician"], $_POST["Email"], $_POST["Passwd"], $_POST["HostName"]);
-        $resultOfExecute = $sqlInsert->execute();
-        if (!$resultOfExecute) {
-            print "Adding a new User, failed!";
+        if (!$sqlUpdate) {
+            die("User couldnt be updated");
         }
+
+        $sqlUpdate->bind_param("issssssi", $_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"], $_POST["usernoEdit"]);
+        $sqlUpdate->execute();
+
+        header("refresh: 0");
     }
-    ?>
-    </table>
+
+    $sqlSelect = $connection->prepare("SELECT * FROM Users WHERE Email=?");
+    $sqlSelect->bind_param("s", $_SESSION["CurrentUser"]);
+    $sqlSelect->execute();
+    $result = $sqlSelect->get_result();
+
+
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+        ?>
+            <table>
+                <tr>
+                    <th>UserNo</th>
+                    <th>Name</th>
+                    <th>FirstName</th>
+                    <th>Technician</th>
+                    <th>Email</th>
+                    <th>Passwd</th>
+                    <th>HostName</th>
+                    <th>Buttons</th>
+                </tr>
+                <tr>
+                    <td><?= $row["UserNo"] ?></td>
+                    <td><?= $row["Name"] ?></td>
+                    <td><?= $row["FirstName"] ?></td>
+                    <td><?= $row["Technician"] ?></td>
+                    <td><?= $row["Email"] ?></td>
+                    <td><?= $row["Passwd"] ?></td>
+                    <td><?= $row["HostName"] ?></td>
+                    <td>
+                        <form method="POST">
+                            <input type="hidden" name="UserToEdit" value="<?= $row["UserNo"] ?>">
+                            <input type="submit" value="Edit">
+                        </form>
+                    </td>
+                </tr>
+        <?php
+        }
+    } else {
+        print "Something went wrong selecting data";
+    }
+        ?>
+            
 
 </body>
 
