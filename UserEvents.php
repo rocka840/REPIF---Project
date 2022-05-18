@@ -30,6 +30,18 @@
         $sqlDelete->close();
     }
 
+    if(isset($_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["descriptionEdit"])){
+        $sqlUpdate = $connection->prepare("UPDATE Events SET HostName=?, PinNo=?, EventCode=?, HostName=? WHERE EventCode = ?");
+
+        if(!$sqlUpdate){
+            die("Group couldnt be updated");
+        }
+        
+        $sqlUpdate->bind_param("sisss", $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["descriptionEdit"], $_POST["eventcodeEdit"]);
+        $sqlUpdate->execute();
+
+        header("refresh: 0");
+    }
     if (isset($_POST["eventToEdit"])) {
         $sqlEditEvent = $_POST["eventToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM Events WHERE EventCode=?");
@@ -63,20 +75,10 @@
             <button type="submit">Submit</button>
         </form>
         <?php
+        die();
         }
     
-        if(isset($_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["descriptionEdit"])){
-            $sqlUpdate = $connection->prepare("UPDATE Events SET HostName=?, PinNo=?, EventCode=?, HostName=? WHERE EventCode = ?");
-
-            if(!$sqlUpdate){
-                die("Group couldnt be updated");
-            }
-            
-            $sqlUpdate->bind_param("sisss", $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["descriptionEdit"], $_POST["eventcodeEdit"]);
-            $sqlUpdate->execute();
-
-            header("refresh: 0");
-        }
+      
 
         $sqlSelect = $connection->prepare("SELECT * from Users u JOIN Events e ON u.HostName = e.HostName where e.HostName = ?");
         $sqlSelect->bind_param("i", $_SESSION["CurrentUser"]);

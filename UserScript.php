@@ -29,6 +29,16 @@
         $sqlDelete->close();
     }
 
+    if (isset($_POST["scriptnameEdit"], $_POST["pathEdit"], $_POST["descriptionEdit"])) {
+        $sqlUpdate = $connection->prepare("UPDATE Script SET ScriptName=?, Path=?, Description=? WHERE ScriptName = ?");
+        if (!$sqlUpdate) {
+            die("Script couldnt be updated");
+        }
+        $sqlUpdate->bind_param("ssss", $_POST["scriptnameEdit"], $_POST["pathEdit"], $_POST["descriptionEdit"], $_POST["scriptnameEdit"]);
+        $sqlUpdate->execute();
+
+        header("refresh: 0");
+    }
     if (isset($_POST["scriptToEdit"])) {
         $sqlEditScript = $_POST["scriptToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM Script WHERE ScriptName=?");
@@ -56,17 +66,9 @@
             <button type="submit">Submit</button>
         </form>
         <?php
+        die();
     }
-    if (isset($_POST["scriptnameEdit"], $_POST["pathEdit"], $_POST["descriptionEdit"])) {
-        $sqlUpdate = $connection->prepare("UPDATE Script SET ScriptName=?, Path=?, Description=? WHERE ScriptName = ?");
-        if (!$sqlUpdate) {
-            die("Script couldnt be updated");
-        }
-        $sqlUpdate->bind_param("ssss", $_POST["scriptnameEdit"], $_POST["pathEdit"], $_POST["descriptionEdit"], $_POST["scriptnameEdit"]);
-        $sqlUpdate->execute();
-
-        header("refresh: 0");
-    }
+    
 
     $sqlSelect = $connection->prepare("SELECT * from Users u JOIN Script s  JOIN Use ON u.HostName = s.ScriptName where use.GroupNo = ?");
     $sqlSelect->bind_param("i", $_SESSION["CurrentUser"]);

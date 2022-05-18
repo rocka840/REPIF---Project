@@ -30,6 +30,18 @@
         $sqlDelete->close();
     }
 
+    if(isset($_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["groupnoEdit"], $_POST["targetfunctioncodeEdit"], $_POST["descriptionEdit"], $_POST["sequencenoEdit"], $_POST["waitingdurationEdit"], )){
+        $sqlUpdate = $connection->prepare("UPDATE Switch_Execute SET HostName=?, PinNo=?, EventCode=?, GroupNo=?, TargetFunctionCode=?, Description=?, SequenceNo=?, WaitingDuration=? WHERE TargetFunctionCode = ?");
+
+        if(!$sqlUpdate){
+            die("Group couldnt be updated");
+        }
+        
+        $sqlUpdate->bind_param("sisissiis", $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["groupnoEdit"], $_POST["targetfunctioncodeEdit"], $_POST["descriptionEdit"], $_POST["sequencenoEdit"], $_POST["sequencenoEdit"], $_POST["waitingdurationEdit"], $_POST["targetfunctioncodeEdit"]);
+        $sqlUpdate->execute();
+
+        header("refresh: 0");
+    }
     if (isset($_POST["switchexecuteToEdit"])) {
         $sqlEditSwitchExecute = $_POST["switchexecuteToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM Switch_Execute WHERE TargetFunctionCode=?");
@@ -83,21 +95,9 @@
             <button type="submit">Submit</button>
         </form>
         <?php
+        die();
         }
     
-        if(isset($_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["groupnoEdit"], $_POST["targetfunctioncodeEdit"], $_POST["descriptionEdit"], $_POST["sequencenoEdit"], $_POST["waitingdurationEdit"], )){
-            $sqlUpdate = $connection->prepare("UPDATE Switch_Execute SET HostName=?, PinNo=?, EventCode=?, GroupNo=?, TargetFunctionCode=?, Description=?, SequenceNo=?, WaitingDuration=? WHERE TargetFunctionCode = ?");
-
-            if(!$sqlUpdate){
-                die("Group couldnt be updated");
-            }
-            
-            $sqlUpdate->bind_param("sisissiis", $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["groupnoEdit"], $_POST["targetfunctioncodeEdit"], $_POST["descriptionEdit"], $_POST["sequencenoEdit"], $_POST["sequencenoEdit"], $_POST["waitingdurationEdit"], $_POST["targetfunctioncodeEdit"]);
-            $sqlUpdate->execute();
-
-            header("refresh: 0");
-        }
-
         $sqlSelect = $connection->prepare("SELECT * from Users u JOIN Switch_Execute s ON u.HostName = s.HostName where s.HostName = ?");
         $sqlSelect->bind_param("i", $_SESSION["CurrentUser"]);
         $sqlSelect->execute();

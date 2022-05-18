@@ -30,6 +30,18 @@
         $sqlDelete->close();
     }
 
+    if(isset($_POST["groupnoEdit"], $_POST["groupnameEdit"], $_POST["descriptionEdit"], $_POST["hostnameEdit"])){
+        $sqlUpdate = $connection->prepare("UPDATE Groups SET GroupNo=?, GroupName=?, Description=?, HostName=? WHERE GroupNo = ?");
+
+        if(!$sqlUpdate){
+            die("Group couldnt be updated");
+        }
+        
+        $sqlUpdate->bind_param("isssi", $_POST["groupnoEdit"], $_POST["groupnameEdit"], $_POST["descriptionEdit"], $_POST["hostnameEdit"], $_POST["groupnoEdit"]);
+        $sqlUpdate->execute();
+
+        header("refresh: 0");
+    }
     if (isset($_POST["groupToEdit"])) {
         $sqlEditSmartbox = $_POST["groupToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM Groups WHERE GroupNo=?");
@@ -63,20 +75,10 @@
             <button type="submit">Submit</button>
         </form>
         <?php
+        die();
         }
     
-        if(isset($_POST["groupnoEdit"], $_POST["groupnameEdit"], $_POST["descriptionEdit"], $_POST["hostnameEdit"])){
-            $sqlUpdate = $connection->prepare("UPDATE Groups SET GroupNo=?, GroupName=?, Description=?, HostName=? WHERE GroupNo = ?");
-
-            if(!$sqlUpdate){
-                die("Group couldnt be updated");
-            }
-            
-            $sqlUpdate->bind_param("isssi", $_POST["groupnoEdit"], $_POST["groupnameEdit"], $_POST["descriptionEdit"], $_POST["hostnameEdit"], $_POST["groupnoEdit"]);
-            $sqlUpdate->execute();
-
-            header("refresh: 0");
-        }
+      
 
         $sqlSelect = $connection->prepare("SELECT * from Users u JOIN Groups g ON u.HostName = g.HostName where g.HostName = ?");
         $sqlSelect->bind_param("i", $_SESSION["CurrentUser"]);

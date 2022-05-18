@@ -18,7 +18,18 @@
     include_once("usernav.php");
     include_once("repif_db.php");
 
+    if (isset($_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"])) {
+        $sqlUpdate = $connection->prepare("UPDATE Users SET UserNo=?, Name=?, FirstName=?, Technician=?, Email=?, Passwd=?, HostName=? WHERE UserNo = ?");
 
+        if (!$sqlUpdate) {
+            die("User couldnt be updated");
+        }
+
+        $sqlUpdate->bind_param("issssssi", $_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"], $_POST["usernoEdit"]);
+        $sqlUpdate->execute();
+
+        header("refresh: 0");
+    }
     if (isset($_POST["UserToEdit"])) {
         $sqlEditUser = $_POST["UserToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM Users WHERE UserNo=?");
@@ -66,19 +77,9 @@
             <button type="submit">Submit</button>
         </form>
         <?php
+        die();
     }
-    if (isset($_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"])) {
-        $sqlUpdate = $connection->prepare("UPDATE Users SET UserNo=?, Name=?, FirstName=?, Technician=?, Email=?, Passwd=?, HostName=? WHERE UserNo = ?");
-
-        if (!$sqlUpdate) {
-            die("User couldnt be updated");
-        }
-
-        $sqlUpdate->bind_param("issssssi", $_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"], $_POST["usernoEdit"]);
-        $sqlUpdate->execute();
-
-        header("refresh: 0");
-    }
+ 
 
     $sqlSelect = $connection->prepare("SELECT * FROM Users WHERE Email=?");
     $sqlSelect->bind_param("s", $_SESSION["CurrentUser"]);
