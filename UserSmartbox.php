@@ -1,3 +1,7 @@
+<?php
+include_once("usernav.php");
+include_once("repif_db.php");
+?>
 <!DOCTYPE html>
 <html>
 
@@ -16,8 +20,6 @@
     <h1 style="text-align:center">Smartboxes - User Configuration Pages</h1>
 
     <?php
-    include_once("usernav.php");
-    include_once("repif_db.php");
 
 
     $sqlSelect = $connection->prepare("SELECT * from Users u JOIN SmartBox s ON u.HostName = s.HostName where s.HostName = ?");

@@ -17,7 +17,7 @@
     session_start();
     session_destroy();
     $_SESSION["isUserLoggedIn"] == false;
-    header("Location: ../REPIF-Project/Login.php");
+    header("Location: Login.php");
     die();
   }
   ?>

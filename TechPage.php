@@ -12,7 +12,7 @@
     <?php
     include_once("technav.php");
     ?>
-    <p>Welcome Technician to the Smartbox configurations</p>
+    <p style="text-align:center">Welcome Technician to the Smartbox configurations</p>
 
 </body>
 </html>

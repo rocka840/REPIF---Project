@@ -1,3 +1,44 @@
+<?php
+include_once("technav.php");
+include_once("repif_db.php");
+
+if (isset($_POST["HostName"], $_POST["Description"], $_POST["Location"])) {
+    $sqlInsert = $connection->prepare("INSERT INTO SmartBox (HostName, Description, Location) values(?,?,?)");
+    $sqlInsert->bind_param("sss", $_POST["HostName"], $_POST["Description"], $_POST["Location"]);
+    $resultOfExecute = $sqlInsert->execute();
+    if (!$resultOfExecute) {
+        print "Adding a new smartbox, failed!";
+    } else {
+        header("refresh: 0");
+        die();
+    }
+}
+if (isset($_POST["smartboxToDelete"])) {
+    $sqlDelete = $connection->prepare("DELETE from SmartBox where HostName = ?");
+    if (!$sqlDelete)
+        die("Error in sql delete statement");
+    $sqlDelete->bind_param("s", $_POST["smartboxToDelete"]);
+    $sqlDelete->execute();
+    $sqlDelete->close();
+    header("refresh: 0");
+    die();
+}
+
+if(isset($_POST["hostnameEdit"], $_POST["descriptionEdit"], $_POST["locationEdit"])){
+    $sqlUpdate = $connection->prepare("UPDATE SmartBox SET HostName=?, Description=?, Location=? WHERE HostName = ?");
+
+    if(!$sqlUpdate){
+        die("SmartBox couldnt be updated");
+    }
+    
+    $sqlUpdate->bind_param("ssss", $_POST["hostnameEdit"], $_POST["descriptionEdit"], $_POST["locationEdit"], $_POST["hostnameEdit"]);
+    $sqlUpdate->execute();
+
+    header("refresh: 0");
+    die();
+}
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -16,32 +57,9 @@
     <h1 style="text-align:center">Smartboxes - Technician Configuration Pages</h1>
 
     <?php
-    include_once("technav.php");
-    include_once("repif_db.php");
 
     $result = $connection->query("SELECT * from SmartBox");
 
-    if (isset($_POST["smartboxToDelete"])) {
-        $sqlDelete = $connection->prepare("Delete from Smartbox where HostName = ?");
-        if (!$sqlDelete)
-            die("Error in sql delete statement");
-        $sqlDelete->bind_param("i", $_POST["smartboxToDelete"]);
-        $sqlDelete->execute();
-        $sqlDelete->close();
-    }
-
-    if(isset($_POST["hostnameEdit"], $_POST["descriptionEdit"], $_POST["locationEdit"])){
-        $sqlUpdate = $connection->prepare("UPDATE SmartBox SET HostName=?, Description=?, Location=? WHERE HostName = ?");
-
-        if(!$sqlUpdate){
-            die("SmartBox couldnt be updated");
-        }
-        
-        $sqlUpdate->bind_param("ssss", $_POST["hostnameEdit"], $_POST["descriptionEdit"], $_POST["locationEdit"], $_POST["hostnameEdit"]);
-        $sqlUpdate->execute();
-
-        header("refresh: 0");
-    }
     if (isset($_POST["smartboxToEdit"])) {
         $sqlEditSmartbox = $_POST["smartboxToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM SmartBox WHERE HostName=?");
@@ -104,15 +122,6 @@
                     }
                 } else {
                     print "Something went wrong with selecting data";
-                }
-
-                if (isset($_POST["HostName"], $_POST["Description"], $_POST["Location"])) {
-                    $sqlInsert = $connection->prepare("INSERT INTO SmartBox (HostName, Description, Location) values(?,?,?)");
-                    $sqlInsert->bind_param("sss", $_POST["HostName"], $_POST["Description"], $_POST["Location"]);
-                    $resultOfExecute = $sqlInsert->execute();
-                    if (!$resultOfExecute) {
-                        print "Adding a new smartbox, failed!";
-                    }
                 }
     ?>
         </table>

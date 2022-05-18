@@ -1,3 +1,42 @@
+<?php
+include_once("usernav.php");
+include_once("repif_db.php");
+if (isset($_POST["concernToDelete"])) {
+    $sqlDelete = $connection->prepare("Delete from Concern where GroupNo = ?");
+    if (!$sqlDelete)
+        die("Error in sql delete statement");
+    $sqlDelete->bind_param("i", $_POST["concernToDelete"]);
+    $sqlDelete->execute();
+    $sqlDelete->close();
+    header("refresh: 0");
+    die();
+}
+
+if(isset($_POST["groupnoEdit"], $_POST["hostnameEdit"], $_POST["pinnoEdit"])){
+    $sqlUpdate = $connection->prepare("UPDATE Concern SET GroupNo=?, HostName=?, PinNo=? WHERE HostName = ?");
+
+    if(!$sqlUpdate){
+        die("Concern couldnt be updated");
+    }
+    
+    $sqlUpdate->bind_param("isii", $_POST["groupnoEdit"], $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["groupnoEdit"]);
+    $sqlUpdate->execute();
+
+    header("refresh: 0");
+    die();
+}
+if (isset($_POST["GroupNo"], $_POST["HostName"], $_POST["PinNo"])) {
+    $sqlInsert = $connection->prepare("INSERT INTO Concern (GroupNo, HostName, PinNo) values(?,?,?)");
+    $sqlInsert->bind_param("isi", $_POST["GroupNo"], $_POST["HostName"], $_POST["PinNo"]);
+    $resultOfExecute = $sqlInsert->execute();
+    if (!$resultOfExecute) {
+        print "Adding a new concern, failed!";
+    } else {
+        header("refresh: 0");
+        die();
+    }
+}
+?>
 <!DOCTYPE html>
 <html>
 
@@ -16,32 +55,9 @@
     <h1 style="text-align:center">Concern - User Configuration Pages</h1>
 
     <?php
-    include_once("usernav.php");
-    include_once("repif_db.php");
 
     $result = $connection->query("SELECT * from Concern");
 
-    if (isset($_POST["concernToDelete"])) {
-        $sqlDelete = $connection->prepare("Delete from Concern where GroupNo = ?");
-        if (!$sqlDelete)
-            die("Error in sql delete statement");
-        $sqlDelete->bind_param("i", $_POST["concernToDelete"]);
-        $sqlDelete->execute();
-        $sqlDelete->close();
-    }
-
-    if(isset($_POST["groupnoEdit"], $_POST["hostnameEdit"], $_POST["pinnoEdit"])){
-        $sqlUpdate = $connection->prepare("UPDATE Concern SET GroupNo=?, HostName=?, PinNo=? WHERE HostName = ?");
-
-        if(!$sqlUpdate){
-            die("Concern couldnt be updated");
-        }
-        
-        $sqlUpdate->bind_param("isii", $_POST["groupnoEdit"], $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["groupnoEdit"]);
-        $sqlUpdate->execute();
-
-        header("refresh: 0");
-    }
     if (isset($_POST["concernToEdit"])) {
         $sqlEditConcern = $_POST["concernToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM Concern WHERE GroupNo=?");
@@ -59,7 +75,7 @@
 
             <div>
                 <label>HostName</label>
-                <input type="text" name="hostnameEdit" value="<?= $data[0]["HostName"] ?>">
+                <input type="text" name="hostnameEdit" value="<?= $data[0]["HostName"] ?>"disabled>
                 <input type="hidden" name="hostnameSearch" value="<?= $data[0]["HostName"] ?>">
             </div>
             <div>
@@ -110,14 +126,6 @@
                     print "Something went wrong with selecting data";
                 }
 
-                if (isset($_POST["GroupNo"], $_POST["HostName"], $_POST["PinNo"])) {
-                    $sqlInsert = $connection->prepare("INSERT INTO Concern (GroupNo, HostName, PinNo) values(?,?,?)");
-                    $sqlInsert->bind_param("isi", $_POST["GroupNo"], $_POST["HostName"], $_POST["PinNo"]);
-                    $resultOfExecute = $sqlInsert->execute();
-                    if (!$resultOfExecute) {
-                        print "Adding a new concern, failed!";
-                    }
-                }
     ?>
         </table>
         <form method="POST">

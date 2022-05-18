@@ -1,3 +1,42 @@
+<?php
+include_once("usernav.php");
+include_once("repif_db.php");
+if (isset($_POST["eventToDelete"])) {
+    $sqlDelete = $connection->prepare("Delete from Events where EventCode = ?");
+    if (!$sqlDelete)
+        die("Error in sql delete statement");
+    $sqlDelete->bind_param("i", $_POST["eventToDelete"]);
+    $sqlDelete->execute();
+    $sqlDelete->close();
+    header("refresh: 0");
+    die();
+}
+
+if(isset($_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["descriptionEdit"])){
+    $sqlUpdate = $connection->prepare("UPDATE Events SET HostName=?, PinNo=?, EventCode=?, HostName=? WHERE EventCode = ?");
+
+    if(!$sqlUpdate){
+        die("Group couldnt be updated");
+    }
+    
+    $sqlUpdate->bind_param("sisss", $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["descriptionEdit"], $_POST["eventcodeEdit"]);
+    $sqlUpdate->execute();
+
+    header("refresh: 0");
+    die();
+}
+if (isset($_POST["HostName"], $_POST["PinNo"], $_POST["EventCode"], $_POST["Description"])) {
+    $sqlInsert = $connection->prepare("INSERT INTO Events (HostName, PinNo, EventCode, Description) values(?,?,?,?)");
+    $sqlInsert->bind_param("siss", $_POST["HostName"], $_POST["PinNo"], $_POST["EventCode"], $_POST["Description"]);
+    $resultOfExecute = $sqlInsert->execute();
+    if (!$resultOfExecute) {
+        print "Adding a new event, failed!";
+    } else {
+        header("refresh: 0");
+        die();
+    }
+}
+?>
 <!DOCTYPE html>
 <html>
 
@@ -16,32 +55,8 @@
     <h1 style="text-align:center">Events - User Configuration Pages</h1>
 
     <?php
-    include_once("usernav.php");
-    include_once("repif_db.php");
-
     $result = $connection->query("SELECT * from Events");
 
-    if (isset($_POST["eventToDelete"])) {
-        $sqlDelete = $connection->prepare("Delete from Events where EventCode = ?");
-        if (!$sqlDelete)
-            die("Error in sql delete statement");
-        $sqlDelete->bind_param("i", $_POST["eventToDelete"]);
-        $sqlDelete->execute();
-        $sqlDelete->close();
-    }
-
-    if(isset($_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["descriptionEdit"])){
-        $sqlUpdate = $connection->prepare("UPDATE Events SET HostName=?, PinNo=?, EventCode=?, HostName=? WHERE EventCode = ?");
-
-        if(!$sqlUpdate){
-            die("Group couldnt be updated");
-        }
-        
-        $sqlUpdate->bind_param("sisss", $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["descriptionEdit"], $_POST["eventcodeEdit"]);
-        $sqlUpdate->execute();
-
-        header("refresh: 0");
-    }
     if (isset($_POST["eventToEdit"])) {
         $sqlEditEvent = $_POST["eventToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM Events WHERE EventCode=?");
@@ -53,7 +68,7 @@
         <form method="POST">
             <div>
                 <label>HostName</label>
-                <input type="text" name="hostnameEdit" value="<?= $data[0]["HostName"] ?>">
+                <input type="text" name="hostnameEdit" value="<?= $data[0]["HostName"] ?>"disabled>
                 <input type="hidden" name="hostnameSearch" value="<?= $data[0]["HostName"] ?>">
             </div>
 
@@ -116,15 +131,6 @@
                     }
                 } else {
                     print "Something went wrong with selecting data";
-                }
-
-                if (isset($_POST["HostName"], $_POST["PinNo"], $_POST["EventCode"], $_POST["Description"])) {
-                    $sqlInsert = $connection->prepare("INSERT INTO Events (HostName, PinNo, EventCode, Description) values(?,?,?,?)");
-                    $sqlInsert->bind_param("siss", $_POST["HostName"], $_POST["PinNo"], $_POST["EventCode"], $_POST["Description"]);
-                    $resultOfExecute = $sqlInsert->execute();
-                    if (!$resultOfExecute) {
-                        print "Adding a new event, failed!";
-                    }
                 }
     ?>
         </table>

@@ -1,3 +1,58 @@
+<?php
+include_once("usernav.php");
+include_once("repif_db.php");
+if (isset($_POST["groupToDelete"])) {
+    $sqlDelete = $connection->prepare("Delete from Groups where GroupNo = ?");
+    if (!$sqlDelete)
+        die("Error in sql delete statement");
+    $sqlDelete->bind_param("i", $_POST["groupToDelete"]);
+    $sqlDelete->execute();
+    $sqlDelete->close();
+    header("refresh: 0");
+    die();
+}
+
+//script page start when button pressed
+
+if(isset($_POST["scriptnameView"], $_POST["pathView"], $_POST["descriptionEdit"])){
+    $sqlView = $connection->prepare("SELECT * FROM Script, `Use` WHERE Script.ScriptName = `Use`.ScriptName AND GroupNo=?");
+
+    if(!$sqlView){
+        die("Couldnt view the Scripts");
+    }
+    
+    $sqlUpdate->bind_param("ssss", $_POST["scriptnameView"], $_POST["pathView"], $_POST["descriptionEdit"], $_POST["groupnoEdit"]);
+    $sqlUpdate->execute();
+
+    header("refresh: 0");
+    die();
+}
+
+if(isset($_POST["groupnoEdit"], $_POST["groupnameEdit"], $_POST["descriptionEdit"], $_POST["hostnameEdit"])){
+    $sqlUpdate = $connection->prepare("UPDATE Groups SET GroupNo=?, GroupName=?, Description=?, HostName=? WHERE GroupNo = ?");
+
+    if(!$sqlUpdate){
+        die("Group couldnt be updated");
+    }
+    
+    $sqlUpdate->bind_param("isssi", $_POST["groupnoEdit"], $_POST["groupnameEdit"], $_POST["descriptionEdit"], $_POST["hostnameEdit"], $_POST["groupnoEdit"]);
+    $sqlUpdate->execute();
+
+    header("refresh: 0");
+    die();
+}
+if (isset($_POST["GroupNo"], $_POST["GroupName"], $_POST["Description"], $_POST["HostName"])) {
+    $sqlInsert = $connection->prepare("INSERT INTO Groups (GroupNo, GroupName, Description, HostName) values(?,?,?,?)");
+    $sqlInsert->bind_param("isss", $_POST["GroupNo"], $_POST["GroupName"], $_POST["Description"], $_POST["HostName"]);
+    $resultOfExecute = $sqlInsert->execute();
+    if (!$resultOfExecute) {
+        print "Adding a new group, failed!";
+    } else {
+        header("refresh: 0");
+        die();
+    }
+}
+?>
 <!DOCTYPE html>
 <html>
 
@@ -16,44 +71,18 @@
     <h1 style="text-align:center;">Groups - User Configuration Pages</h1>
 
     <?php
-    include_once("usernav.php");
-    include_once("repif_db.php");
-
     $result = $connection->query("SELECT * from Groups");
 
-    if (isset($_POST["groupToDelete"])) {
-        $sqlDelete = $connection->prepare("Delete from Groups where GroupNo = ?");
-        if (!$sqlDelete)
-            die("Error in sql delete statement");
-        $sqlDelete->bind_param("i", $_POST["groupToDelete"]);
-        $sqlDelete->execute();
-        $sqlDelete->close();
-    }
-
-    //script page start when button pressed
-
-    if(isset($_POST["scriptnameView"], $_POST["pathView"], $_POST["descriptionEdit"])){
-        $sqlView = $connection->prepare("SELECT * FROM Script, `Use` WHERE Script.ScriptName = `Use`.ScriptName AND GroupNo=?");
-
-        if(!$sqlView){
-            die("Couldnt view the Scripts");
-        }
-        
-        $sqlUpdate->bind_param("ssss", $_POST["scriptnameView"], $_POST["pathView"], $_POST["descriptionEdit"], $_POST["groupnoEdit"]);
-        $sqlUpdate->execute();
-
-        header("refresh: 0");
-    }
-
     if (isset($_POST["viewScript"])) {
-        $sqlSelect = $connection->prepare("SELECT * FROM Script WHERE ScriptName=?");
-        $sqlSelect->bind_param("s", $_POST["viewScript"]);
+        $sqlSelect = $connection->prepare("SELECT * from `Use`u JOIN Script s ON u.ScriptName = s.ScriptName WHERE u.GroupNo =?");
+        $sqlSelect->bind_param("i", $_POST["viewScript"]);
         $sqlSelect->execute();
         $result = $sqlSelect->get_result();
-        $data = $result->fetch_all(MYSQLI_ASSOC);
+
+        while ($row = $result->fetch_assoc()) {
     ?>
         <form method="POST">
-        <table>
+        <table class="table table-hover table-success">
             <tr>
                 <th>ScriptName</th>
                 <th>Path</th>
@@ -67,25 +96,14 @@
         </table>
         </form>
         <?php
-        die();
+        
         }
+        die();
+    }
 
 
         //group page start here
 
-
-    if(isset($_POST["groupnoEdit"], $_POST["groupnameEdit"], $_POST["descriptionEdit"], $_POST["hostnameEdit"])){
-        $sqlUpdate = $connection->prepare("UPDATE Groups SET GroupNo=?, GroupName=?, Description=?, HostName=? WHERE GroupNo = ?");
-
-        if(!$sqlUpdate){
-            die("Group couldnt be updated");
-        }
-        
-        $sqlUpdate->bind_param("isssi", $_POST["groupnoEdit"], $_POST["groupnameEdit"], $_POST["descriptionEdit"], $_POST["hostnameEdit"], $_POST["groupnoEdit"]);
-        $sqlUpdate->execute();
-
-        header("refresh: 0");
-    }
 
     if (isset($_POST["groupToEdit"])) {
         $sqlEditGroup = $_POST["groupToEdit"];
@@ -114,7 +132,7 @@
             </div>
             <div>
                 <label>HostName</label>
-                <input type="text" name="hostnameEdit" value="<?= $data[0]["HostName"] ?>">
+                <input type="text" name="hostnameEdit" value="<?= $data[0]["HostName"] ?>"disabled>
                 <input type="hidden" name="hostnameSearch" value="<?= $data[0]["HostName"] ?>">
             </div>
             <button type="submit">Submit</button>
@@ -167,14 +185,6 @@
                     print "Something went wrong with selecting data";
                 }
 
-                if (isset($_POST["GroupNo"], $_POST["GroupName"], $_POST["Description"], $_POST["HostName"])) {
-                    $sqlInsert = $connection->prepare("INSERT INTO Groups (GroupNo, GroupName, Description, HostName) values(?,?,?,?)");
-                    $sqlInsert->bind_param("isss", $_POST["GroupNo"], $_POST["GroupName"], $_POST["Description"], $_POST["HostName"]);
-                    $resultOfExecute = $sqlInsert->execute();
-                    if (!$resultOfExecute) {
-                        print "Adding a new group, failed!";
-                    }
-                }
     ?>
         </table>
         <form method="POST">

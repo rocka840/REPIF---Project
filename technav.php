@@ -1,3 +1,13 @@
+<?php
+  if (isset($_GET["logout"])) {
+    session_start();
+    session_destroy();
+    $_SESSION["isUserLoggedIn"] == false;
+    header("Location: Login.php");
+    die();
+  }
+  ?>
+
 <!DOCTYPE html>
 <html>
 
@@ -12,15 +22,6 @@
 
 <body>
 
-  <?php
-  if (isset($_GET["logout"])) {
-    session_start();
-    session_destroy();
-    $_SESSION["isUserLoggedIn"] == false;
-    header("Location: ../REPIF-Project/Login.php");
-    die();
-  }
-  ?>
 
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color:papayawhip;">
   <div class="container-fluid">

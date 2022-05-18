@@ -1,3 +1,41 @@
+<?php
+include_once "repif_db.php";
+include_once("technav.php");
+if (isset($_POST["HostName"], $_POST["PinNo"], $_POST["Input"], $_POST["Designation"])) {
+    $sqlInsert = $connection->prepare("INSERT INTO Pin (HostName, PinNo, Input, Designation) values (?,?,?,?)");
+    $sqlInsert->bind_param("siis", $_POST["HostName"], $_POST["PinNo"], $_POST["Input"], $_POST["Designation"]);
+    $resultOfExecute = $sqlInsert->execute();
+    if (!$resultOfExecute) {
+        print "Adding a new pin, failed!";
+    } else {
+        header("refresh: 0");
+        die();
+    }
+}
+
+if (isset($_POST["pinToDelete"])) {
+    $sqlDelete = $connection->prepare("Delete from Pin where PinNo = ?");
+    if (!$sqlDelete)
+        die("Error in sql delete statement");
+    $sqlDelete->bind_param("i", $_POST["pinToDelete"]);
+    $sqlDelete->execute();
+    $sqlDelete->close();
+    header("refresh: 0");
+    die();
+}
+
+if (isset($_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["inputEdit"], $_POST["designationEdit"])) {
+    $sqlUpdate = $connection->prepare("UPDATE Pin SET HostName=?, PinNo=?, Input=?, Designation=? WHERE PinNo = ?");
+    if (!$sqlUpdate) {
+        die("Pins couldnt be updated");
+    }
+    $sqlUpdate->bind_param("siisi", $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["inputEdit"], $_POST["designationEdit"], $_POST["pinnoEdit"]);
+    $sqlUpdate->execute();
+
+    header("refresh: 0");
+    die();
+}
+?>
 <!DOCTYPE html>
 <html>
 
@@ -15,29 +53,8 @@
     <h1 style="text-align:center">Pins - Technician Configuration Pages</h1>
 
     <?php
-    include_once "repif_db.php";
-    include_once("technav.php");
     $result = $connection->query("SELECT * FROM Pin");
 
-    if (isset($_POST["pinToDelete"])) {
-        $sqlDelete = $connection->prepare("Delete from Pins where PinNo = ?");
-        if (!$sqlDelete)
-            die("Error in sql delete statement");
-        $sqlDelete->bind_param("i", $_POST["pinToDelete"]);
-        $sqlDelete->execute();
-        $sqlDelete->close();
-    }
-
-    if (isset($_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["inputEdit"], $_POST["designationEdit"])) {
-        $sqlUpdate = $connection->prepare("UPDATE Pin SET HostName=?, PinNo=?, Input=?, Designation=? WHERE PinNo = ?");
-        if (!$sqlUpdate) {
-            die("Pins couldnt be updated");
-        }
-        $sqlUpdate->bind_param("siisi", $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["inputEdit"], $_POST["designationEdit"], $_POST["pinnoEdit"]);
-        $sqlUpdate->execute();
-
-        header("refresh: 0");
-    }
     if (isset($_POST["pinToEdit"])) {
         $sqlEditPins = $_POST["pinToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM Pin WHERE PinNo = ?");
@@ -105,15 +122,6 @@
         }
     } else {
         print "Something went wrong with selecting data";
-    }
-
-    if (isset($_POST["HostName"], $_POST["PinNo"], $_POST["Input"], $_POST["Designation"])) {
-        $sqlInsert = $connection->prepare("INSERT INTO Pin (HostName, PinNo, Input, Designation) values (?,?,?,?)");
-        $sqlInsert->bind_param("siis", $_POST["HostName"], $_POST["PinNo"], $_POST["Input"], $_POST["Designation"]);
-        $resultOfExecute = $sqlInsert->execute();
-        if (!$resultOfExecute) {
-            print "Adding a new pin, failed!";
-        }
     }
         ?>
 

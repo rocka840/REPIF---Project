@@ -1,3 +1,43 @@
+<?php
+include_once("technav.php");
+include_once("repif_db.php");
+if (isset($_POST["UserToDelete"])) {
+    $sqlDelete = $connection->prepare("Delete from Users where UserNo = ?");
+    if (!$sqlDelete)
+        die("Error in sql delete statement");
+    $sqlDelete->bind_param("i", $_POST["UserToDelete"]);
+    $sqlDelete->execute();
+    $sqlDelete->close();
+    header("refresh: 0");
+    die();
+}
+
+if (isset($_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"])) {
+    $sqlUpdate = $connection->prepare("UPDATE Users SET UserNo=?, Name=?, FirstName=?, Technician=?, Email=?, Passwd=?, HostName=? WHERE UserNo = ?");
+
+    if (!$sqlUpdate) {
+        die("User couldnt be updated");
+    }
+    $hashed = password_hash($_POST["passwdEdit"], PASSWORD_DEFAULT);
+    $sqlUpdate->bind_param("issssssi", $_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $hashed, $_POST["hostnameEdit"], $_POST["usernoEdit"]);
+    $sqlUpdate->execute();
+
+    header("refresh: 0");
+    die();
+}
+
+if (isset($_POST["UserNo"], $_POST["Name"], $_POST["FirstName"], $_POST["Technician"], $_POST["Email"], $_POST["Passwd"], $_POST["HostName"])) {
+    $sqlInsert = $connection->prepare("INSERT INTO Users (UserNo, Name, FirstName, Technician, Email, Passwd, HostName) values (?,?,?,?,?,?,?)");
+    $sqlInsert->bind_param("issssss", $_POST["UserNo"], $_POST["Name"], $_POST["FirstName"], $_POST["Technician"], $_POST["Email"], $_POST["Passwd"], $_POST["HostName"]);
+    $resultOfExecute = $sqlInsert->execute();
+    if (!$resultOfExecute) {
+        print "Adding a new User, failed!";
+    } else {
+        header("refresh: 0");
+        die();
+    }
+}
+?>
 <!DOCTYPE html>
 <html>
 
@@ -15,30 +55,7 @@
     <h1 style="text-align:center">Users - Technician Configuration Pages</h1>
 
     <?php
-    include_once("technav.php");
-    include_once("repif_db.php");
 
-    if (isset($_POST["UserToDelete"])) {
-        $sqlDelete = $connection->prepare("Delete from Users where UserNo = ?");
-        if (!$sqlDelete)
-            die("Error in sql delete statement");
-        $sqlDelete->bind_param("i", $_POST["UserToDelete"]);
-        $sqlDelete->execute();
-        $sqlDelete->close();
-    }
-
-    if (isset($_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"])) {
-        $sqlUpdate = $connection->prepare("UPDATE Users SET UserNo=?, Name=?, FirstName=?, Technician=?, Email=?, Passwd=?, HostName=? WHERE UserNo = ?");
-
-        if (!$sqlUpdate) {
-            die("User couldnt be updated");
-        }
-
-        $sqlUpdate->bind_param("issssssi", $_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"], $_POST["usernoEdit"]);
-        $sqlUpdate->execute();
-
-        header("refresh: 0");
-    }
 
     if (isset($_POST["UserToEdit"])) {
         $sqlEditUser = $_POST["UserToEdit"];
@@ -76,7 +93,7 @@
             </div>
             <div>
                 <label>Passwd</label>
-                <input type="text" name="passwdEdit" value="<?= $data[0]["Passwd"] ?>">
+                <input type="password" name="passwdEdit">
                 <input type="hidden" name="passwdSearch" value="<?= $data[0]["Passwd"] ?>">
             </div>
             <div>
@@ -133,14 +150,6 @@
         print "Something went wrong selecting data";
     }
 
-    if (isset($_POST["UserNo"], $_POST["Name"], $_POST["FirstName"], $_POST["Technician"], $_POST["Email"], $_POST["Passwd"], $_POST["HostName"])) {
-        $sqlInsert = $connection->prepare("INSERT INTO Users (UserNo, Name, FirstName, Technician, Email, Passwd, HostName) values (?,?,?,?,?,?,?)");
-        $sqlInsert->bind_param("issssss", $_POST["UserNo"], $_POST["Name"], $_POST["FirstName"], $_POST["Technician"], $_POST["Email"], $_POST["Passwd"], $_POST["HostName"]);
-        $resultOfExecute = $sqlInsert->execute();
-        if (!$resultOfExecute) {
-            print "Adding a new User, failed!";
-        }
-    }
         ?>
             </table>
             <form method="POST">

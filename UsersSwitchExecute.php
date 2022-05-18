@@ -1,3 +1,42 @@
+<?php
+include_once("usernav.php");
+include_once("repif_db.php");
+if (isset($_POST["switchexecuteToDelete"])) {
+    $sqlDelete = $connection->prepare("Delete from Switch_Execute where TargetFunctionCode = ?");
+    if (!$sqlDelete)
+        die("Error in sql delete statement");
+    $sqlDelete->bind_param("i", $_POST["switchexecuteToDelete"]);
+    $sqlDelete->execute();
+    $sqlDelete->close();
+    header("refresh: 0");
+    die();
+}
+
+if(isset($_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["groupnoEdit"], $_POST["targetfunctioncodeEdit"], $_POST["descriptionEdit"], $_POST["sequencenoEdit"], $_POST["waitingdurationEdit"], )){
+    $sqlUpdate = $connection->prepare("UPDATE Switch_Execute SET HostName=?, PinNo=?, EventCode=?, GroupNo=?, TargetFunctionCode=?, Description=?, SequenceNo=?, WaitingDuration=? WHERE TargetFunctionCode = ?");
+
+    if(!$sqlUpdate){
+        die("Group couldnt be updated");
+    }
+    
+    $sqlUpdate->bind_param("sisissiis", $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["groupnoEdit"], $_POST["targetfunctioncodeEdit"], $_POST["descriptionEdit"], $_POST["sequencenoEdit"], $_POST["sequencenoEdit"], $_POST["waitingdurationEdit"], $_POST["targetfunctioncodeEdit"]);
+    $sqlUpdate->execute();
+
+    header("refresh: 0");
+    die();
+}
+if (isset($_POST["HostName"], $_POST["PinNo"], $_POST["EventCode"],  $_POST["GroupNo"], $_POST["TargetFunctionCode"], $_POST["Description"], $_POST["SequenceNo"], $_POST["WaitingDuration"])) {
+    $sqlInsert = $connection->prepare("INSERT INTO Switch_Execute (HostName, PinNo, EventCode, GroupNo, TargetFunctionCode, Description, SequenceNo, WaitingDuration) values(?,?,?,?, ?, ?, ?, ?)");
+    $sqlInsert->bind_param("sissssii", $_POST["HostName"], $_POST["PinNo"], $_POST["EventCode"], $_POST["GroupNo"], $_POST["TargetFunctionCode"], $_POST["Description"], $_POST["SequenceNo"], $_POST["WaitingDuration"]);
+    $resultOfExecute = $sqlInsert->execute();
+    if (!$resultOfExecute) {
+        print "Adding a new event, failed!";
+    } else {
+        header("refresh: 0");
+        die();
+    }
+}
+?>
 <!DOCTYPE html>
 <html>
 
@@ -16,32 +55,9 @@
     <h1 style="text-align:center">Switch-Execute - User Configuration Pages</h1>
 
     <?php
-    include_once("usernav.php");
-    include_once("repif_db.php");
 
     $result = $connection->query("SELECT * from Switch_Execute");
 
-    if (isset($_POST["switchexecuteToDelete"])) {
-        $sqlDelete = $connection->prepare("Delete from Switch_Execute where TargetFunctionCode = ?");
-        if (!$sqlDelete)
-            die("Error in sql delete statement");
-        $sqlDelete->bind_param("s", $_POST["switchexecuteToDelete"]);
-        $sqlDelete->execute();
-        $sqlDelete->close();
-    }
-
-    if(isset($_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["groupnoEdit"], $_POST["targetfunctioncodeEdit"], $_POST["descriptionEdit"], $_POST["sequencenoEdit"], $_POST["waitingdurationEdit"], )){
-        $sqlUpdate = $connection->prepare("UPDATE Switch_Execute SET HostName=?, PinNo=?, EventCode=?, GroupNo=?, TargetFunctionCode=?, Description=?, SequenceNo=?, WaitingDuration=? WHERE TargetFunctionCode = ?");
-
-        if(!$sqlUpdate){
-            die("Group couldnt be updated");
-        }
-        
-        $sqlUpdate->bind_param("sisissiis", $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["groupnoEdit"], $_POST["targetfunctioncodeEdit"], $_POST["descriptionEdit"], $_POST["sequencenoEdit"], $_POST["sequencenoEdit"], $_POST["waitingdurationEdit"], $_POST["targetfunctioncodeEdit"]);
-        $sqlUpdate->execute();
-
-        header("refresh: 0");
-    }
     if (isset($_POST["switchexecuteToEdit"])) {
         $sqlEditSwitchExecute = $_POST["switchexecuteToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM Switch_Execute WHERE TargetFunctionCode=?");
@@ -53,7 +69,7 @@
         <form method="POST">
             <div>
                 <label>HostName</label>
-                <input type="text" name="hostnameEdit" value="<?= $data[0]["HostName"] ?>">
+                <input type="text" name="hostnameEdit" value="<?= $data[0]["HostName"] ?>"disabled>
                 <input type="hidden" name="hostnameSearch" value="<?= $data[0]["HostName"] ?>">
             </div>
 
@@ -144,14 +160,6 @@
                     print "Something went wrong with selecting data";
                 }
 
-                if (isset($_POST["HostName"], $_POST["PinNo"], $_POST["EventCode"],  $_POST["GroupNo"], $_POST["TargetFunctionCode"], $_POST["Description"], $_POST["SequenceNo"], $_POST["WaitingDuration"])) {
-                    $sqlInsert = $connection->prepare("INSERT INTO Switch_Execute (HostName, PinNo, EventCode, GroupNo, TargetFunctionCode, Description, SequenceNo, WaitingDuration) values(?,?,?,?, ?, ?, ?, ?)");
-                    $sqlInsert->bind_param("siss", $_POST["HostName"], $_POST["PinNo"], $_POST["EventCode"], $_POST["GroupNo"], $_POST["TargetFunctionCode"], $_POST["Description"], $_POST["SequenceNo"], $_POST["WaitingDuration"]);
-                    $resultOfExecute = $sqlInsert->execute();
-                    if (!$resultOfExecute) {
-                        print "Adding a new event, failed!";
-                    }
-                }
     ?>
         </table>
         <form method="POST">

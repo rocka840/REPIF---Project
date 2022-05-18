@@ -18,17 +18,17 @@
     include_once("usernav.php");
     include_once("repif_db.php");
 
-    if (isset($_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"])) {
+    if (isset($_POST["pswdWarning"], $_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"])) {
         $sqlUpdate = $connection->prepare("UPDATE Users SET UserNo=?, Name=?, FirstName=?, Technician=?, Email=?, Passwd=?, HostName=? WHERE UserNo = ?");
 
         if (!$sqlUpdate) {
             die("User couldnt be updated");
         }
-
-        $sqlUpdate->bind_param("issssssi", $_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"], $_POST["usernoEdit"]);
+        $hashed = password_hash($_POST["passwdEdit"], PASSWORD_DEFAULT);
+        $sqlUpdate->bind_param("issssssi", $_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $hashed, $_POST["hostnameEdit"], $_POST["usernoEdit"]);
         $sqlUpdate->execute();
-
         header("refresh: 0");
+        die();
     }
     if (isset($_POST["UserToEdit"])) {
         $sqlEditUser = $_POST["UserToEdit"];
@@ -41,7 +41,7 @@
         <form method="POST">
             <div>
                 <label>UserNo</label>
-                <input type="text" name="usernoEdit" value="<?= $data[0]["UserNo"] ?>">
+                <input type="text" name="usernoEdit" value="<?= $data[0]["UserNo"] ?>"disabled>
                 <input type="hidden" name="usernoSearch" value="<?= $data[0]["UserNo"] ?>">
             </div>
             <div>
@@ -56,7 +56,7 @@
             </div>
             <div>
                 <label>Technician</label>
-                <input type="text" name="technicianEdit" value="<?= $data[0]["Technician"] ?>">
+                <input type="text" name="technicianEdit" value="<?= $data[0]["Technician"] ?>"disabled>
                 <input type="hidden" name="technicianSearch" value="<?= $data[0]["Technician"] ?>">
             </div>
             <div>
@@ -66,13 +66,17 @@
             </div>
             <div>
                 <label>Passwd</label>
-                <input type="text" name="passwdEdit" value="<?= $data[0]["Passwd"] ?>">
+                <input type="password" name="passwdEdit">
                 <input type="hidden" name="passwdSearch" value="<?= $data[0]["Passwd"] ?>">
             </div>
             <div>
                 <label>HostName</label>
-                <input type="text" name="hostnameEdit" value="<?= $data[0]["HostName"] ?>">
+                <input type="text" name="hostnameEdit" value="<?= $data[0]["HostName"] ?>" disabled>
                 <input type="hidden" name="hostnameSearch" value="<?= $data[0]["HostName"] ?>">
+            </div>
+            <div>
+                <label>Are You Sure You Want A Password Change?????????</label>
+                <input type="checkbox" name="pswdWarning">
             </div>
             <button type="submit">Submit</button>
         </form>

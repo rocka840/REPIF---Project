@@ -1,3 +1,41 @@
+<?php
+include_once("technav.php");
+include_once("repif_db.php");
+if (isset($_POST["scriptToDelete"])) {
+    $sqlDelete = $connection->prepare("Delete from Script where ScriptName = ?");
+    if (!$sqlDelete)
+        die("Error in sql delete statement");
+    $sqlDelete->bind_param("s", $_POST["scriptToDelete"]);
+    $sqlDelete->execute();
+    $sqlDelete->close();
+    header("refresh: 0");
+    die();
+}
+
+if (isset($_POST["scriptnameEdit"], $_POST["pathEdit"], $_POST["descriptionEdit"])) {
+    $sqlUpdate = $connection->prepare("UPDATE Script SET ScriptName=?, Path=?, Description=? WHERE ScriptName = ?");
+    if (!$sqlUpdate) {
+        die("Script couldnt be updated");
+    }
+    $sqlUpdate->bind_param("ssss", $_POST["scriptnameEdit"], $_POST["pathEdit"], $_POST["descriptionEdit"], $_POST["scriptnameEdit"]);
+    $sqlUpdate->execute();
+
+    header("refresh: 0");
+    die();
+}
+
+if (isset($_POST["ScriptName"], $_POST["Path"], $_POST["Description"])) {
+    $sqlInsert = $connection->prepare("INSERT INTO Script (ScriptName, Path, Description) values (?,?,?)");
+    $sqlInsert->bind_param("sss", $_POST["ScriptName"], $_POST["Path"], $_POST["Description"]);
+    $resultOfExecute = $sqlInsert->execute();
+    if (!$resultOfExecute) {
+        print "Adding a new script, failed";
+    } else {
+        header("refresh: 0");
+        die();
+    }
+}
+?>
 <!DOCTYPE html>
 <html>
 
@@ -15,30 +53,7 @@
     <h1 style="text-align:center">Script - Technician Configuration Pages</h1>
 
     <?php
-    include_once("technav.php");
-    include_once("repif_db.php");
-
     $result = $connection->query("SELECT * from Script");
-
-    if (isset($_POST["scriptToDelete"])) {
-        $sqlDelete = $connection->prepare("Delete from Pins where ScriptName = ?");
-        if (!$sqlDelete)
-            die("Error in sql delete statement");
-        $sqlDelete->bind_param("i", $_POST["scriptToDelete"]);
-        $sqlDelete->execute();
-        $sqlDelete->close();
-    }
-
-    if (isset($_POST["scriptnameEdit"], $_POST["pathEdit"], $_POST["descriptionEdit"])) {
-        $sqlUpdate = $connection->prepare("UPDATE Script SET ScriptName=?, Path=?, Description=? WHERE ScriptName = ?");
-        if (!$sqlUpdate) {
-            die("Script couldnt be updated");
-        }
-        $sqlUpdate->bind_param("ssss", $_POST["scriptnameEdit"], $_POST["pathEdit"], $_POST["descriptionEdit"], $_POST["scriptnameEdit"]);
-        $sqlUpdate->execute();
-
-        header("refresh: 0");
-    }
     if (isset($_POST["scriptToEdit"])) {
         $sqlEditScript = $_POST["scriptToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM Script WHERE ScriptName=?");
@@ -99,15 +114,6 @@
         }
     } else {
         print "Something went wrong with selecting data";
-    }
-
-    if (isset($_POST["ScriptName"], $_POST["Path"], $_POST["Description"])) {
-        $sqlInsert = $connection->prepare("INSERT INTO Script (ScriptName, Path, Description) values (?,?,?)");
-        $sqlInsert->bind_param("sss", $_POST["ScriptName"], $_POST["Path"], $_POST["Description"]);
-        $resultOfExecute = $sqlInsert->execute();
-        if (!$resultOfExecute) {
-            print "Adding a new script, failed";
-        }
     }
         ?>
 
