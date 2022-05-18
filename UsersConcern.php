@@ -31,13 +31,13 @@
     }
 
     if(isset($_POST["groupnoEdit"], $_POST["hostnameEdit"], $_POST["pinnoEdit"])){
-        $sqlUpdate = $connection->prepare("UPDATE Events SET HostName=?, PinNo=?, EventCode=?, HostName=? WHERE EventCode = ?");
+        $sqlUpdate = $connection->prepare("UPDATE Concern SET GroupNo=?, HostName=?, PinNo=? WHERE HostName = ?");
 
         if(!$sqlUpdate){
-            die("Group couldnt be updated");
+            die("Concern couldnt be updated");
         }
         
-        $sqlUpdate->bind_param("sisss", $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["eventcodeEdit"], $_POST["descriptionEdit"], $_POST["eventcodeEdit"]);
+        $sqlUpdate->bind_param("isss", $_POST["groupnoEdit"], $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["groupnoEdit"]);
         $sqlUpdate->execute();
 
         header("refresh: 0");
@@ -74,8 +74,7 @@
         }
     
       
-
-        $sqlSelect = $connection->prepare("SELECT * from Users u JOIN Events e ON u.HostName = e.HostName where e.HostName = ?");
+        $sqlSelect = $connection->prepare("SELECT * from Users u JOIN Concern c ON u.HostName = c.HostName where c.HostName = ?");
         $sqlSelect->bind_param("i", $_SESSION["CurrentUser"]);
         $sqlSelect->execute();
         $result = $sqlSelect->get_result();
@@ -85,24 +84,22 @@
         ?>
         <table class="table table-hover table-success">
             <tr>
+                <th>GroupNo</th>
                 <th>HostName</th>
                 <th>PinNo</th>
-                <th>EventCode</th>
-                <th>Description</th>
                 <th>Buttons</th>
             </tr>
             <tr>
+                <td><?= $row["GroupNo"] ?></td>
                 <td><?= $row["HostName"] ?></td>
                 <td><?= $row["PinNo"] ?></td>
-                <td><?= $row["EventCode"] ?></td>
-                <td><?= $row["Description"] ?></td>
                 <td>
                     <form method="POST">
-                        <input type="hidden" name="eventToDelete" value="<?= $row["EventCode"] ?>">
+                        <input type="hidden" name="concernToDelete" value="<?= $row["HostName"] ?>">
                         <input type="submit" value="Remove" class="btn btn-outline-dark">
                     </form>
                     <form method="POST">
-                        <input type="hidden" name="eventToEdit" value="<?= $row["EventCode"] ?>">
+                        <input type="hidden" name="concernToEdit" value="<?= $row["HostName"] ?>">
                         <input type="submit" value="Edit" class="btn btn-outline-dark">
                     </form>
                 </td>
@@ -113,21 +110,20 @@
                     print "Something went wrong with selecting data";
                 }
 
-                if (isset($_POST["HostName"], $_POST["PinNo"], $_POST["EventCode"], $_POST["Description"])) {
-                    $sqlInsert = $connection->prepare("INSERT INTO Events (HostName, PinNo, EventCode, Description) values(?,?,?,?)");
-                    $sqlInsert->bind_param("siss", $_POST["HostName"], $_POST["PinNo"], $_POST["EventCode"], $_POST["Description"]);
+                if (isset($_POST["GroupNo"], $_POST["HostName"], $_POST["PinNo"])) {
+                    $sqlInsert = $connection->prepare("INSERT INTO Concern (GroupNo, HostName, PinNo) values(?,?,?)");
+                    $sqlInsert->bind_param("isi", $_POST["GroupNo"], $_POST["HostName"], $_POST["PinNo"]);
                     $resultOfExecute = $sqlInsert->execute();
                     if (!$resultOfExecute) {
-                        print "Adding a new event, failed!";
+                        print "Adding a new concern, failed!";
                     }
                 }
     ?>
         </table>
         <form method="POST">
-            Add a New Event: <input name="HostName" placeholder="SB_nbr">
+            Add a New Event: <input name="GroupNo" placeholder="nbr">
+            <input name="HostName" placeholder="SB_nbr">
             <input name="PinNo" placeholder="nbr">
-            <input name="EventCode" placeholder="letter">
-            <input name="Description" placeholder="Press light switch briefly">
             <input type="submit" value="Add">
         </form>
 </body>

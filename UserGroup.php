@@ -86,9 +86,9 @@
     }
 
     if (isset($_POST["groupToEdit"])) {
-        $sqlEditSmartbox = $_POST["groupToEdit"];
+        $sqlEditGroup = $_POST["groupToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM Groups WHERE GroupNo=?");
-        $sqlSelect->bind_param("i", $sqlEditSmartbox);
+        $sqlSelect->bind_param("i", $sqlEditGroup);
         $sqlSelect->execute();
         $result = $sqlSelect->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
