@@ -60,9 +60,9 @@
                 <th>Description</th>
             </tr>
             <tr>
-                <td><?= $data[0]["ScriptName"] ?></td>
-                <td><?= $data[0]["Path"] ?></td>
-                <td><?= $data[0]["Description"] ?></td>
+                <td><?= $row["ScriptName"] ?></td>
+                <td><?= $row["Path"] ?></td>
+                <td><?= $row["Description"] ?></td>
             </tr>
         </table>
         </form>
