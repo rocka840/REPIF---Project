@@ -12,7 +12,7 @@
 
 <body>
 
-    <h1>Script - User Configuration Pages</h1>
+    <h1 style="text-align:center">Script - User Configuration Pages</h1>
 
     <?php
     include_once("usernav.php");
@@ -70,7 +70,7 @@
     }
     
 
-    $sqlSelect = $connection->prepare("SELECT * from Users u JOIN Script s  JOIN Use ON u.HostName = s.ScriptName where use.GroupNo = ?");
+    $sqlSelect = $connection->prepare("SELECT * FROM ");
     $sqlSelect->bind_param("i", $_SESSION["CurrentUser"]);
     $sqlSelect->execute();
     $result = $sqlSelect->get_result();

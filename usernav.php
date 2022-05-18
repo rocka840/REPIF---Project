@@ -31,6 +31,7 @@
     <a class="nav-link active" aria-current="page" href="UserPins.php">Pins</a>
     <a class="nav-link active" href="UserEvents.php">Events</a>
         <a class="nav-link active" href="UserGroup.php">Groups</a>
+        <a class="nav-link active" href="UsersConcern.php">Concern</a>
         <a class="nav-link active" href="UsersSwitchExecute.php">Switch-Execute</a>
         <a class="nav-link active" href="UserScript.php">Scripts</a>
         <a class="nav-link active" href="UsersUser.php">User</a>

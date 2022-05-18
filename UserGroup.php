@@ -30,6 +30,48 @@
         $sqlDelete->close();
     }
 
+    if(isset($_POST["scriptnameView"], $_POST["pathView"], $_POST["descriptionEdit"])){
+        $sqlView = $connection->prepare("SELECT * FROM Script, `Use` WHERE Script.ScriptName = `Use`.ScriptName AND GroupNo=?");
+
+        if(!$sqlView){
+            die("Couldnt view the Scripts");
+        }
+        
+        $sqlUpdate->bind_param("ssss", $_POST["scriptnameView"], $_POST["pathView"], $_POST["descriptionEdit"], $_POST["groupnoEdit"]);
+        $sqlUpdate->execute();
+
+        header("refresh: 0");
+    }
+    if (isset($_POST["viewScript"])) {
+        $sqlSelect = $connection->prepare("SELECT GroupNo FROM Groups WHERE GroupNo=?");
+        $sqlSelect->bind_param("i", $_POST["viewScript"]);
+        $sqlSelect->execute();
+        $result = $sqlSelect->get_result();
+        $data = $result->fetch_all(MYSQLI_ASSOC);
+    ?>
+        <form method="POST">
+            <div>
+                <label>ScriptName</label>
+                <input type="text" name="scriptnameView" value="<?= $data[0]["GroupNo"] ?>">
+                <input type="hidden" name="scriptnameSearch" value="<?= $data[0]["GroupNo"] ?>">
+            </div>
+
+            <div>
+                <label>Path</label>
+                <input type="text" name="pathView" value="<?= $data[0]["GroupName"] ?>">
+                <input type="hidden" name="pathSearch" value="<?= $data[0]["GroupName"] ?>">
+            </div>
+            <div>
+                <label>Description</label>
+                <input type="text" name="descriptionView" value="<?= $data[0]["Description"] ?>">
+                <input type="hidden" name="descriptionSearch" value="<?= $data[0]["Description"] ?>">
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+        <?php
+        die();
+        }
+
     if(isset($_POST["groupnoEdit"], $_POST["groupnameEdit"], $_POST["descriptionEdit"], $_POST["hostnameEdit"])){
         $sqlUpdate = $connection->prepare("UPDATE Groups SET GroupNo=?, GroupName=?, Description=?, HostName=? WHERE GroupNo = ?");
 
@@ -42,6 +84,7 @@
 
         header("refresh: 0");
     }
+
     if (isset($_POST["groupToEdit"])) {
         $sqlEditSmartbox = $_POST["groupToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM Groups WHERE GroupNo=?");
@@ -109,6 +152,10 @@
                     <form method="POST">
                         <input type="hidden" name="groupToEdit" value="<?= $row["GroupNo"] ?>">
                         <input type="submit" value="Edit" class="btn btn-outline-dark">
+                    </form>
+                    <form method="POST">
+                        <input type="hidden" name="viewScript" value="<?= $row["GroupNo"] ?>">
+                        <input type="submit" value="View" class="btn btn-outline-dark">
                     </form>
                 </td>
             </tr>
