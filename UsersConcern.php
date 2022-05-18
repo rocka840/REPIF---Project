@@ -37,7 +37,7 @@
             die("Concern couldnt be updated");
         }
         
-        $sqlUpdate->bind_param("isss", $_POST["groupnoEdit"], $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["groupnoEdit"]);
+        $sqlUpdate->bind_param("isii", $_POST["groupnoEdit"], $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["groupnoEdit"]);
         $sqlUpdate->execute();
 
         header("refresh: 0");
@@ -95,11 +95,11 @@
                 <td><?= $row["PinNo"] ?></td>
                 <td>
                     <form method="POST">
-                        <input type="hidden" name="concernToDelete" value="<?= $row["HostName"] ?>">
+                        <input type="hidden" name="concernToDelete" value="<?= $row["GroupNo"] ?>">
                         <input type="submit" value="Remove" class="btn btn-outline-dark">
                     </form>
                     <form method="POST">
-                        <input type="hidden" name="concernToEdit" value="<?= $row["HostName"] ?>">
+                        <input type="hidden" name="concernToEdit" value="<?= $row["GroupNo"] ?>">
                         <input type="submit" value="Edit" class="btn btn-outline-dark">
                     </form>
                 </td>

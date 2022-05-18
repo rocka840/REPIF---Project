@@ -13,9 +13,8 @@
 <body>
 
   <?php
-  if (isset($_POST["logout"])) {
+  if (isset($_GET["logout"])) {
     session_start();
-    session_unset();
     session_destroy();
     $_SESSION["isUserLoggedIn"] == false;
     header("Location: ../REPIF-Project/Login.php");

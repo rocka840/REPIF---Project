@@ -30,6 +30,8 @@
         $sqlDelete->close();
     }
 
+    //script page start when button pressed
+
     if(isset($_POST["scriptnameView"], $_POST["pathView"], $_POST["descriptionEdit"])){
         $sqlView = $connection->prepare("SELECT * FROM Script, `Use` WHERE Script.ScriptName = `Use`.ScriptName AND GroupNo=?");
 
@@ -42,35 +44,35 @@
 
         header("refresh: 0");
     }
+
     if (isset($_POST["viewScript"])) {
-        $sqlSelect = $connection->prepare("SELECT GroupNo FROM Groups WHERE GroupNo=?");
-        $sqlSelect->bind_param("i", $_POST["viewScript"]);
+        $sqlSelect = $connection->prepare("SELECT * FROM Script WHERE ScriptName=?");
+        $sqlSelect->bind_param("s", $_POST["viewScript"]);
         $sqlSelect->execute();
         $result = $sqlSelect->get_result();
         $data = $result->fetch_all(MYSQLI_ASSOC);
     ?>
         <form method="POST">
-            <div>
-                <label>ScriptName</label>
-                <input type="text" name="scriptnameView" value="<?= $data[0]["GroupNo"] ?>">
-                <input type="hidden" name="scriptnameSearch" value="<?= $data[0]["GroupNo"] ?>">
-            </div>
-
-            <div>
-                <label>Path</label>
-                <input type="text" name="pathView" value="<?= $data[0]["GroupName"] ?>">
-                <input type="hidden" name="pathSearch" value="<?= $data[0]["GroupName"] ?>">
-            </div>
-            <div>
-                <label>Description</label>
-                <input type="text" name="descriptionView" value="<?= $data[0]["Description"] ?>">
-                <input type="hidden" name="descriptionSearch" value="<?= $data[0]["Description"] ?>">
-            </div>
-            <button type="submit">Submit</button>
+        <table>
+            <tr>
+                <th>ScriptName</th>
+                <th>Path</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td><?= $data[0]["ScriptName"] ?></td>
+                <td><?= $data[0]["Path"] ?></td>
+                <td><?= $data[0]["Description"] ?></td>
+            </tr>
+        </table>
         </form>
         <?php
         die();
         }
+
+
+        //group page start here
+
 
     if(isset($_POST["groupnoEdit"], $_POST["groupnameEdit"], $_POST["descriptionEdit"], $_POST["hostnameEdit"])){
         $sqlUpdate = $connection->prepare("UPDATE Groups SET GroupNo=?, GroupName=?, Description=?, HostName=? WHERE GroupNo = ?");

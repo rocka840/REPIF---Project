@@ -1,4 +1,4 @@
-                                                                                                                            <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -13,9 +13,8 @@
 <body>
 
   <?php
-  if (isset($_POST["logout"])) {
+  if (isset($_GET["logout"])) {
     session_start();
-    session_unset();
     session_destroy();
     $_SESSION["isUserLoggedIn"] == false;
     header("Location: ../REPIF-Project/Login.php");
@@ -33,7 +32,6 @@
         <a class="nav-link active" href="UserGroup.php">Groups</a>
         <a class="nav-link active" href="UsersConcern.php">Concern</a>
         <a class="nav-link active" href="UsersSwitchExecute.php">Switch-Execute</a>
-        <a class="nav-link active" href="UserScript.php">Scripts</a>
         <a class="nav-link active" href="UsersUser.php">User</a>
         </div>
     <form class="d-flex">
