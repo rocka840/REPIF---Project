@@ -1,6 +1,5 @@
 <?php
-include_once("technav.php");
-include_once("repif_db.php");
+ include_once("repif_db.php");
 if (isset($_POST["scriptToDelete"])) {
     $sqlDelete = $connection->prepare("Delete from Script where ScriptName = ?");
     if (!$sqlDelete)
@@ -53,6 +52,8 @@ if (isset($_POST["ScriptName"], $_POST["Path"], $_POST["Description"])) {
     <h1 style="text-align:center">Script - Technician Configuration Pages</h1>
 
     <?php
+    include_once("technav.php");
+   
     $result = $connection->query("SELECT * from Script");
     if (isset($_POST["scriptToEdit"])) {
         $sqlEditScript = $_POST["scriptToEdit"];

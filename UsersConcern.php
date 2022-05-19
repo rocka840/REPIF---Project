@@ -1,41 +1,5 @@
 <?php
-include_once("usernav.php");
 include_once("repif_db.php");
-if (isset($_POST["concernToDelete"])) {
-    $sqlDelete = $connection->prepare("Delete from Concern where GroupNo = ?");
-    if (!$sqlDelete)
-        die("Error in sql delete statement");
-    $sqlDelete->bind_param("i", $_POST["concernToDelete"]);
-    $sqlDelete->execute();
-    $sqlDelete->close();
-    header("refresh: 0");
-    die();
-}
-
-if(isset($_POST["groupnoEdit"], $_POST["hostnameEdit"], $_POST["pinnoEdit"])){
-    $sqlUpdate = $connection->prepare("UPDATE Concern SET GroupNo=?, HostName=?, PinNo=? WHERE HostName = ?");
-
-    if(!$sqlUpdate){
-        die("Concern couldnt be updated");
-    }
-    
-    $sqlUpdate->bind_param("isii", $_POST["groupnoEdit"], $_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["groupnoEdit"]);
-    $sqlUpdate->execute();
-
-    header("refresh: 0");
-    die();
-}
-if (isset($_POST["GroupNo"], $_POST["HostName"], $_POST["PinNo"])) {
-    $sqlInsert = $connection->prepare("INSERT INTO Concern (GroupNo, HostName, PinNo) values(?,?,?)");
-    $sqlInsert->bind_param("isi", $_POST["GroupNo"], $_POST["HostName"], $_POST["PinNo"]);
-    $resultOfExecute = $sqlInsert->execute();
-    if (!$resultOfExecute) {
-        print "Adding a new concern, failed!";
-    } else {
-        header("refresh: 0");
-        die();
-    }
-}
 ?>
 <!DOCTYPE html>
 <html>
@@ -52,88 +16,38 @@ if (isset($_POST["GroupNo"], $_POST["HostName"], $_POST["PinNo"])) {
 
 <body>
 
-    <h1 style="text-align:center">Concern - User Configuration Pages</h1>
+    <h1 style="text-align:center">Smartboxes - User Configuration Pages</h1>
 
     <?php
 
-    $result = $connection->query("SELECT * from Concern");
+include_once("usernav.php");
 
-    if (isset($_POST["concernToEdit"])) {
-        $sqlEditConcern = $_POST["concernToEdit"];
-        $sqlSelect = $connection->prepare("SELECT * FROM Concern WHERE GroupNo=?");
-        $sqlSelect->bind_param("i", $sqlEditConcern);
-        $sqlSelect->execute();
-        $result = $sqlSelect->get_result();
-        $data = $result->fetch_all(MYSQLI_ASSOC);
-    ?>
-        <form method="POST">
-            <div>
-                <label>GroupNo</label>
-                <input type="text" name="groupnoEdit" value="<?= $data[0]["GroupNo"] ?>">
-                <input type="hidden" name="groupSearch" value="<?= $data[0]["GroupNo"] ?>">
-            </div>
-
-            <div>
-                <label>HostName</label>
-                <input type="text" name="hostnameEdit" value="<?= $data[0]["HostName"] ?>"disabled>
-                <input type="hidden" name="hostnameSearch" value="<?= $data[0]["HostName"] ?>">
-            </div>
-            <div>
-                <label>PinNo</label>
-                <input type="text" name="pinnoEdit" value="<?= $data[0]["PinNo"] ?>">
-                <input type="hidden" name="pinnoSearch" value="<?= $data[0]["PinNo"] ?>">
-            </div>
-            <button type="submit">Submit</button>
-        </form>
-        <?php
-        die();
-        }
-    
-      
-        $sqlSelect = $connection->prepare("SELECT * from Users u JOIN Concern c ON u.HostName = c.HostName where c.HostName = ?");
-        $sqlSelect->bind_param("i", $_SESSION["CurrentUser"]);
-        $sqlSelect->execute();
-        $result = $sqlSelect->get_result();
+    $sqlSelect = $connection->prepare("SELECT * from Users u JOIN SmartBox s ON u.HostName = s.HostName where s.HostName = ?");
+    $sqlSelect->bind_param("i", $_SESSION["CurrentUser"]);
+    $sqlSelect->execute();
+    $result = $sqlSelect->get_result();
 
         if ($result) {
         while ($row = $result->fetch_assoc()) {
         ?>
         <table class="table table-hover table-success">
             <tr>
-                <th>GroupNo</th>
                 <th>HostName</th>
-                <th>PinNo</th>
-                <th>Buttons</th>
+                <th>Description</th>
+                <th>Location</th>
             </tr>
             <tr>
-                <td><?= $row["GroupNo"] ?></td>
                 <td><?= $row["HostName"] ?></td>
-                <td><?= $row["PinNo"] ?></td>
-                <td>
-                    <form method="POST">
-                        <input type="hidden" name="concernToDelete" value="<?= $row["GroupNo"] ?>">
-                        <input type="submit" value="Remove" class="btn btn-outline-dark">
-                    </form>
-                    <form method="POST">
-                        <input type="hidden" name="concernToEdit" value="<?= $row["GroupNo"] ?>">
-                        <input type="submit" value="Edit" class="btn btn-outline-dark">
-                    </form>
-                </td>
+                <td><?= $row["Description"] ?></td>
+                <td><?= $row["Location"] ?></td>
             </tr>
     <?php
                     }
                 } else {
                     print "Something went wrong with selecting data";
                 }
-
     ?>
         </table>
-        <form method="POST">
-            Add a New Event: <input name="GroupNo" placeholder="nbr">
-            <input name="HostName" placeholder="SB_nbr">
-            <input name="PinNo" placeholder="nbr">
-            <input type="submit" value="Add">
-        </form>
 </body>
 
 </html>

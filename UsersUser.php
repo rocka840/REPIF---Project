@@ -1,3 +1,21 @@
+<?php
+    include_once("repif_db.php");
+
+  if (isset($_POST["pswdWarning"], $_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"])) {
+      $sqlUpdate = $connection->prepare("UPDATE Users SET UserNo=?, Name=?, FirstName=?, Technician=?, Email=?, Passwd=?, HostName=? WHERE UserNo = ?");
+
+      if (!$sqlUpdate) {
+          die("User couldnt be updated");
+      }
+      $hashed = password_hash($_POST["passwdEdit"], PASSWORD_DEFAULT);
+      $sqlUpdate->bind_param("issssssi", $_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $hashed, $_POST["hostnameEdit"], $_POST["usernoEdit"]);
+      $sqlUpdate->execute();
+      header("refresh: 0");
+      die();
+  }
+?>
+
+
 <!DOCTYPE html>
 <html>
 
@@ -15,21 +33,8 @@
     <h1 style="text-align:center">Users - User Configuration Pages</h1>
 
     <?php
-    include_once("usernav.php");
-    include_once("repif_db.php");
+   include_once("usernav.php");
 
-    if (isset($_POST["pswdWarning"], $_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $_POST["passwdEdit"], $_POST["hostnameEdit"])) {
-        $sqlUpdate = $connection->prepare("UPDATE Users SET UserNo=?, Name=?, FirstName=?, Technician=?, Email=?, Passwd=?, HostName=? WHERE UserNo = ?");
-
-        if (!$sqlUpdate) {
-            die("User couldnt be updated");
-        }
-        $hashed = password_hash($_POST["passwdEdit"], PASSWORD_DEFAULT);
-        $sqlUpdate->bind_param("issssssi", $_POST["usernoEdit"], $_POST["nameEdit"], $_POST["firstnameEdit"], $_POST["technicianEdit"], $_POST["emailEdit"], $hashed, $_POST["hostnameEdit"], $_POST["usernoEdit"]);
-        $sqlUpdate->execute();
-        header("refresh: 0");
-        die();
-    }
     if (isset($_POST["UserToEdit"])) {
         $sqlEditUser = $_POST["UserToEdit"];
         $sqlSelect = $connection->prepare("SELECT * FROM Users WHERE UserNo=?");

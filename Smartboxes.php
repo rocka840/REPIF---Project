@@ -1,5 +1,4 @@
 <?php
-include_once("technav.php");
 include_once("repif_db.php");
 
 if (isset($_POST["HostName"], $_POST["Description"], $_POST["Location"])) {
@@ -57,7 +56,9 @@ if(isset($_POST["hostnameEdit"], $_POST["descriptionEdit"], $_POST["locationEdit
     <h1 style="text-align:center">Smartboxes - Technician Configuration Pages</h1>
 
     <?php
-
+    include_once("technav.php");
+    
+    
     $result = $connection->query("SELECT * from SmartBox");
 
     if (isset($_POST["smartboxToEdit"])) {

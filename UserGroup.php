@@ -1,6 +1,5 @@
 <?php
-include_once("usernav.php");
-include_once("repif_db.php");
+    include_once("repif_db.php");
 if (isset($_POST["groupToDelete"])) {
     $sqlDelete = $connection->prepare("Delete from Groups where GroupNo = ?");
     if (!$sqlDelete)
@@ -71,6 +70,8 @@ if (isset($_POST["GroupNo"], $_POST["GroupName"], $_POST["Description"], $_POST[
     <h1 style="text-align:center;">Groups - User Configuration Pages</h1>
 
     <?php
+    include_once("usernav.php");
+
     $result = $connection->query("SELECT * from Groups");
 
     if (isset($_POST["viewScript"])) {

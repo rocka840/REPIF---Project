@@ -1,5 +1,4 @@
 <?php
-include_once("usernav.php");
 include_once("repif_db.php");
 if (isset($_POST["eventToDelete"])) {
     $sqlDelete = $connection->prepare("Delete from Events where EventCode = ?");
@@ -55,6 +54,8 @@ if (isset($_POST["HostName"], $_POST["PinNo"], $_POST["EventCode"], $_POST["Desc
     <h1 style="text-align:center">Events - User Configuration Pages</h1>
 
     <?php
+    include_once("usernav.php");
+    
     $result = $connection->query("SELECT * from Events");
 
     if (isset($_POST["eventToEdit"])) {

@@ -1,8 +1,7 @@
 <?php
-include_once("usernav.php");
 include_once("repif_db.php");
 if (isset($_POST["switchexecuteToDelete"])) {
-    $sqlDelete = $connection->prepare("Delete from Switch_Execute where TargetFunctionCode = ?");
+    $sqlDelete = $connection->prepare("Delete from Switch_Execute where PinNo = ?");
     if (!$sqlDelete)
         die("Error in sql delete statement");
     $sqlDelete->bind_param("i", $_POST["switchexecuteToDelete"]);
@@ -55,6 +54,7 @@ if (isset($_POST["HostName"], $_POST["PinNo"], $_POST["EventCode"],  $_POST["Gro
     <h1 style="text-align:center">Switch-Execute - User Configuration Pages</h1>
 
     <?php
+include_once("usernav.php");
 
     $result = $connection->query("SELECT * from Switch_Execute");
 

@@ -92,7 +92,7 @@ function sendConf($input) {
 
     $sshconnection = ssh2_connect('192.168.6.231', 22); // ip address of the rpi
 
-    ssh2_auth_password($sshconnection, 'pi', 'raspberry'); // the password is the last field
+    ssh2_auth_password($sshconnection, 'pi', 'omi'); // the password is the last field
 
     ssh2_scp_send($sshconnection,"config/gl.txt", '/home/pi/pif2122/data/gl.txt', 0644);
     ssh2_scp_send($sshconnection,"config/tefg.txt", '/home/pi/pif2122/data/tefg.txt', 0644);
@@ -101,3 +101,6 @@ function sendConf($input) {
 if(isset($_GET["hostname"])) {
     sendConf($_GET["hostname"]);
 }
+
+header("Location: Smartboxes.php");
+            die();

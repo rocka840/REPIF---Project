@@ -1,6 +1,5 @@
 <?php
 include_once "repif_db.php";
-include_once("technav.php");
 if (isset($_POST["HostName"], $_POST["PinNo"], $_POST["Input"], $_POST["Designation"])) {
     $sqlInsert = $connection->prepare("INSERT INTO Pin (HostName, PinNo, Input, Designation) values (?,?,?,?)");
     $sqlInsert->bind_param("siis", $_POST["HostName"], $_POST["PinNo"], $_POST["Input"], $_POST["Designation"]);
@@ -53,6 +52,9 @@ if (isset($_POST["hostnameEdit"], $_POST["pinnoEdit"], $_POST["inputEdit"], $_PO
     <h1 style="text-align:center">Pins - Technician Configuration Pages</h1>
 
     <?php
+
+
+include_once("technav.php");
     $result = $connection->query("SELECT * FROM Pin");
 
     if (isset($_POST["pinToEdit"])) {

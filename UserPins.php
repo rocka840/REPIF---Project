@@ -1,6 +1,5 @@
 <?php
 include_once "repif_db.php";
-include_once("usernav.php");
 if (isset($_POST["pinToDelete"])) {
     $sqlDelete = $connection->prepare("Delete from Pin where PinNo = ?");
     if (!$sqlDelete)
@@ -53,6 +52,8 @@ if (isset($_POST["HostName"], $_POST["PinNo"], $_POST["Input"], $_POST["Designat
     <h1 style="text-align:center">Pins - User Configuration Pages</h1>
 
     <?php
+    
+    include_once("usernav.php");
     $result = $connection->query("SELECT * FROM Pin");
 
     if (isset($_POST["pinToEdit"])) {

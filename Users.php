@@ -1,5 +1,4 @@
 <?php
-include_once("technav.php");
 include_once("repif_db.php");
 if (isset($_POST["UserToDelete"])) {
     $sqlDelete = $connection->prepare("Delete from Users where UserNo = ?");
@@ -56,6 +55,7 @@ if (isset($_POST["UserNo"], $_POST["Name"], $_POST["FirstName"], $_POST["Technic
 
     <?php
 
+include_once("technav.php");
 
     if (isset($_POST["UserToEdit"])) {
         $sqlEditUser = $_POST["UserToEdit"];

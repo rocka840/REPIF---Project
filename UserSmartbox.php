@@ -1,5 +1,4 @@
 <?php
-include_once("usernav.php");
 include_once("repif_db.php");
 ?>
 <!DOCTYPE html>
@@ -21,6 +20,7 @@ include_once("repif_db.php");
 
     <?php
 
+include_once("usernav.php");
 
     $sqlSelect = $connection->prepare("SELECT * from Users u JOIN SmartBox s ON u.HostName = s.HostName where s.HostName = ?");
     $sqlSelect->bind_param("i", $_SESSION["CurrentUser"]);
